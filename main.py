@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image as im
+from PIL import Image as Im
 from aenum import Enum, auto
 
 
@@ -31,7 +31,7 @@ class Color(Enum):
 def main():
     # open image, convert to black and white and into a nd.array
     path = "img/square-maze-game-for-kids-free-vector.jpg"
-    img_original = im.open(path)
+    img_original = Im.open(path)
     img = img_original.convert("L")  # convert to black and white to speed up calculations
     img_array = np.array(img)
 
@@ -45,7 +45,7 @@ def main():
     img_array[borders[2]] = [0]
     img_array[:, borders[3]] = [0]
 
-    new_img = im.fromarray(img_array)
+    new_img = Im.fromarray(img_array)
     new_img.show()
 
     """

@@ -1,1 +1,2 @@
 class Point():
+    pass
