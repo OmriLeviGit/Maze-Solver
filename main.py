@@ -1,9 +1,9 @@
-import numpy as np
 from PIL import Image as Im
 from enum import Enum
 from ordered_enum import OrderedEnum
 
 from Line import Line
+from Maze import Maze
 from Point import Point
 
 """
@@ -27,39 +27,76 @@ class Border(OrderedEnum):
 
 
 class Color(Enum):
-    BLACK = False
-    WHITE = True
+    BLACK = 0
+    WHITE = 255
+    THRESH = 127
+
+
+"""
+def main():
+    # THIS IS USING CV2 AND IMAGE PROCESSING
+    path = "img/square-maze-game-for-kids-free-vector.jpg"
+
+    img = cv2.imread(path)
+
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    threshold = 127
+    lower = np.array([0, 0, 0])
+    higher = np.array([250, 250, 250])
+
+    mask = cv2.inRange(img, lower, higher)
+
+    cont, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    cont_img = cv2.drawContours(img, cont, -1, 255, 3)
+
+    c = max(cont, key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(c)
+    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 5)
+
+    plt.imshow(img)
+    plt.show()
+"""
+"""
+    # open image, binarize, and convert it into a nd.array for easier and faster processing
+path = "img/square-maze-game-for-kids-free-vector.jpg"
+image_original = Im.open(path)
+image_grayscale = image_original.convert("L")
+
+threshold = 128
+image = image_grayscale.point(lambda pixel: Color.WHITE.value if pixel > threshold else Color.BLACK.value)
+image_array = np.array(image)
+
+thickness = get_border_thickness(image_array)
+borders = get_borders_info(image_array, thickness)
+tunnel_width = get_tunnel_width(image_array, borders, thickness)
+
+start_point, end_point = find_openings(image_array, borders)
+# draw start and end points
+image_array[start_point.get_y()][start_point.get_x()] = False
+image_array[end_point.get_y()][end_point.get_x()] = False
+
+new_img = Im.fromarray(image_array)
+new_img.show()
+
+"""
 
 
 def main():
-    # open image, convert to black and white and into a nd.array
-    path = "img/square-maze-game-for-kids-free-vector.jpg"
-    img_original = Im.open(path)
-    img = img_original.convert("1")  # convert to black and white to speed up calculations
-    img_array = np.array(img)
+    path = "img/11x11.bmp"
+    image = Im.open(path).convert("L")
+    maze = Maze(image)
 
-    thickness = get_border_thickness(img_array)
-    borders = get_borders_info(img_array, thickness)
-    tunnel_width = get_tunnel_width(img_array, borders, thickness)
+    array = maze.array
+    nodes = maze.nodes
 
-    start_point, end_point = find_openings(img_array, borders)
+    for node in nodes:
+        x, y = node.coordinate
+        array[x, y] = 127
+
+    print(array)
 
 
-    """
-    # draw borders
-    img_array[borders[0]] = [0]
-    img_array[:, borders[1]] = [0]
-    img_array[borders[2]] = [0]
-    img_array[:, borders[3]] = [0]
-
-    # draw start and end points
-    img_array[start.get_y()][start.get_x()] = False
-    img_array[end.get_y()][end.get_x()] = False
-    
-    new_img = Im.fromarray(img_array)
-    new_img.show()
-    """
-    img_original.close()
 
 
 def find_openings(img_array, borders):
@@ -138,7 +175,6 @@ def get_tunnel_width(img_array, borders, thickness):
     tunnel_width = 0
     while img_array[top_border + tunnel_width][vertical_mid_point] == Color.WHITE.value:
         tunnel_width += 1
-
 
     return tunnel_width
 
