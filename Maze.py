@@ -1,12 +1,4 @@
 import numpy as np
-from aenum import OrderedEnum
-
-
-class Direction(OrderedEnum):
-    TOP = 0
-    RIGHT = 1
-    BOT = 2
-    LEFT = 3
 
 
 class Maze:
@@ -78,7 +70,10 @@ class Maze:
 
         # Process the first row
         for i in range(columns):
-            process_node(0, i, 'top')
+            if self._array[0][i]:
+                entrance = Maze.Node((0, i))
+                top_nodes.append((entrance, i))
+                nodes.append(entrance)
 
         for i in range(1, rows - 1):
             for j in range(columns):
@@ -171,35 +166,7 @@ class Maze:
         #
         #     return nodes
     """
-    """
 
-        # def _find_nodes(self):
-        #     nodes = []
-        #     rows = self._array.shape[0]
-        #     columns = self._array.shape[1]
-        #
-        #     for i in range(rows):
-        #         for j in range(columns):
-        #             if self._array[i][j]:
-        #                 # entrances are always nodes
-        #                 if i == 0 or i == rows - 1 or j == 0 or j == columns - 1:
-        #                     nodes.append((i, j))
-        #                     continue
-        #
-        #                 # find junction between vertical and horizontal path in the maze
-        #                 top_neighbor = self._array[i - 1][j]
-        #                 right_neighbor = self._array[i][j + 1]
-        #                 bottom_neighbor = self._array[i + 1][j]
-        #                 left_neighbor = self._array[i][j - 1]
-        #
-        #                 y_neigh = True if top_neighbor or bottom_neighbor else False
-        #                 x_neigh = True if right_neighbor or left_neighbor else False
-        #
-        #                 if y_neigh and x_neigh:
-        #                     nodes.append((i, j))
-        #
-        #     return nodes
-    """
     @property
     def array(self):
         return self._array
