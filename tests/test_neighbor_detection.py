@@ -1,8 +1,6 @@
 import unittest
 
 import numpy as np
-from queue import Queue
-
 
 from Maze import Maze
 from PIL import Image as Im

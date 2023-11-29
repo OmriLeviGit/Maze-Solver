@@ -36,6 +36,7 @@ class Maze:
                 # hit a wall
                 if not curr:
                     top_dict.pop(j, None)
+                    node_left = None
                     continue
 
                 top_neighbor = self._array[i - 1][j] != 0

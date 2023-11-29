@@ -4,9 +4,9 @@ import numpy as np
 
 
 def solve(maze):
-    entrances = maze.entrances
-    start = entrances[0]
-    end_nodes = []
+    start = maze.start
+    end = maze.end
+    is_completed = False
     parent_dict = {}
 
     visited = np.zeros(maze.array.shape)
@@ -26,11 +26,24 @@ def solve(maze):
 
             parent_dict[neighbor] = curr
             queue.put(neighbor)
-            if neighbor in entrances:
-                end_nodes.append(neighbor)
 
-    curr = end_nodes.pop()
+            if neighbor is end:
+                is_completed = True
+                break
+
+        if is_completed:
+            break
+
+        if queue.empty():
+            return -1
+
+    path = []
+    curr = end
 
     while curr in parent_dict:
-        print(curr.coordinate)
+        path.append(curr.coordinate)
         curr = parent_dict.get(curr)
+
+    path.append(start.coordinate)       # add the first
+
+    return path, is_completed
