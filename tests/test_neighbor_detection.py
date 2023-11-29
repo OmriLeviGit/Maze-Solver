@@ -1,6 +1,8 @@
 import unittest
 
 import numpy as np
+from queue import Queue
+
 
 from Maze import Maze
 from PIL import Image as Im
@@ -19,6 +21,7 @@ class NeighborDetection(unittest.TestCase):
             x, y = node.coordinate
             array[x, y] = 127
 
+
         expected = np.array(
             [[0, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [0, 127, 255, 255, 255, 255, 255, 255, 255, 127, 0],
@@ -30,10 +33,10 @@ class NeighborDetection(unittest.TestCase):
              [0, 127, 255, 127, 0, 127, 255, 127, 0, 255, 0],
              [0, 0, 0, 255, 0, 0, 0, 0, 0, 255, 0],
              [0, 255, 255, 127, 0, 255, 255, 255, 255, 127, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0]]
-        )
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0]], dtype=np.uint8)
 
         np.testing.assert_array_equal(array, expected)
+        self.assertEquals(len(nodes), 14)
 
     def test_medium_perfect(self):
         array = self.medium_maze.array
@@ -64,10 +67,12 @@ class NeighborDetection(unittest.TestCase):
              [0, 255, 0, 127, 255, 127, 255, 127, 0, 127, 255, 255, 255, 127, 0, 127, 255, 255, 255, 127, 0],
              [0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 0, 0, 255, 0, 255, 0, 0, 0, 255, 0],
              [0, 127, 255, 127, 0, 255, 0, 127, 255, 127, 0, 255, 255, 127, 255, 127, 0, 255, 255, 127, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 0, 0]]
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 0, 0]], dtype=np.uint8
         )
 
         np.testing.assert_array_equal(array, expected)
+        self.assertEquals(len(nodes), 64)
+
 
 
 if __name__ == '__main__':
