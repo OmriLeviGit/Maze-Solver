@@ -1,38 +1,24 @@
 from PIL import Image as Im
-from organize import organize
+from solve import solve
 from timeit import timeit
 
 
+# TODO make a factory
+
 def main():
-    path = "img/small_perfect.bmp"
-    image = Im.open(path).convert("L")
+    path = "img/very_large_perfect.bmp"
+    image = None
 
-    print(timeit(lambda: organize(image), number=1))
-
-
-
-    # array = maze.array
-    # nodes = maze.nodes
-    #
-    # for node in nodes:
-    #     x, y = node.coordinate
-    #     array[x, y] = 127
-    #
-    # # Get the original width and height
-    # original_width, original_height = image.size
-    #
-    # # Double the size
-    # new_width = original_width * 100
-    # new_height = original_height * 100
-    #
-    # new_image = Im.fromarray(array)
-    #
-    # # Resize the image
-    # resized_image = new_image.resize((new_width, new_height))
-    # resized_image.show()
-
-
-
+    try:
+        image = Im.open(path).convert("L")
+        print(timeit(lambda: solve(image), number=1))
+    except FileNotFoundError:
+        print(f"Error: The file {path} was not found.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+    finally:
+        if image is not None:
+            image.close()
 
 
 if __name__ == '__main__':

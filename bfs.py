@@ -11,12 +11,12 @@ def solve(maze):
 
     visited = np.zeros(maze.array.shape)
 
-    queue = Queue()
-    queue.put(start)
+    n_queue = Queue()
+    n_queue.put(start)
     visited[start.coordinate] = 1
 
-    while queue.not_empty:
-        curr = queue.get()
+    while n_queue.not_empty:
+        curr = n_queue.get()
         visited[curr.coordinate] = 1
         neighbors = curr.neighbors
 
@@ -25,7 +25,7 @@ def solve(maze):
                 continue
 
             parent_dict[neighbor] = curr
-            queue.put(neighbor)
+            n_queue.put(neighbor)
 
             if neighbor is end:
                 is_completed = True
@@ -34,7 +34,7 @@ def solve(maze):
         if is_completed:
             break
 
-        if queue.empty():
+        if n_queue.empty():
             return -1
 
     path = []
@@ -44,6 +44,6 @@ def solve(maze):
         path.append(curr.coordinate)
         curr = parent_dict.get(curr)
 
-    path.append(start.coordinate)       # add the first
+    path.append(start.coordinate)       # add the start to the path
 
     return path, is_completed
