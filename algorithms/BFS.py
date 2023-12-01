@@ -1,7 +1,9 @@
-from queue import Queue
+from collections import deque
 
 import numpy as np
 
+
+# Breadth First Search
 
 def solve(maze):
     start = maze.start
@@ -9,23 +11,24 @@ def solve(maze):
     is_completed = False
     parent_dict = {}
 
-    visited = np.zeros(maze.array.shape)
+    # Create a boolean array 'visited' to keep track of visited locations in the maze
+    visited = np.full(maze.array.shape, False, dtype=bool)
 
-    n_queue = Queue()
-    n_queue.put(start)
-    visited[start.coordinate] = 1
+    n_queue = deque()
+    n_queue.append(start)
+    visited[start.coordinate] = True
 
-    while n_queue.not_empty:
-        curr = n_queue.get()
-        visited[curr.coordinate] = 1
+    while n_queue:
+        curr = n_queue.popleft()
+        visited[curr.coordinate] = True
         neighbors = curr.neighbors
 
         for neighbor in neighbors:
-            if neighbor is None or visited[neighbor.coordinate] == 1:
+            if neighbor is None or visited[neighbor.coordinate]:
                 continue
 
             parent_dict[neighbor] = curr
-            n_queue.put(neighbor)
+            n_queue.append(neighbor)
 
             if neighbor is end:
                 is_completed = True
@@ -34,7 +37,7 @@ def solve(maze):
         if is_completed:
             break
 
-        if n_queue.empty():
+        if not n_queue:
             return -1
 
     path = []
@@ -44,6 +47,6 @@ def solve(maze):
         path.append(curr.coordinate)
         curr = parent_dict.get(curr)
 
-    path.append(start.coordinate)       # add the start to the path
+    path.append(start.coordinate)  # add the start to the path
 
     return path, is_completed

@@ -1,17 +1,16 @@
 from PIL import Image as Im
-from solve import solve
-from timeit import timeit
+from process import process
 
 
-# TODO make a factory
+# TODO fix the draw function to work on both lht and bfs
 
 def main():
-    path = "img/very_large_perfect.bmp"
+    path = "img/small_perfect.bmp"
     image = None
 
     try:
         image = Im.open(path).convert("L")
-        print(timeit(lambda: solve(image), number=1))
+        process(image)
     except FileNotFoundError:
         print(f"Error: The file {path} was not found.")
     except Exception as e:
