@@ -1,4 +1,4 @@
-import timeit
+import time
 
 import numpy as np
 from PIL import Image as Im
@@ -6,118 +6,119 @@ from Maze import Maze
 from algo_factory import create_solver
 
 
-def process(image):
-    maze_time = timeit.default_timer()
+class CannotCompleteError(Exception):
+    """A custom exception class."""
+    pass
 
+
+def process(image, algo):
+    start_time = time.time()
     maze = Maze(image)
+    maze_time = time.time() - start_time
 
-    print(f"Maze building time: {timeit.default_timer() - maze_time} seconds")
+    solver = create_solver(algo)
 
-    solver = create_solver("lht")
-
-    solver1 = create_solver("bfs")      # delete
-
-    solver_time = timeit.default_timer()
-
+    start_time = time.time()
     path, is_completed = solver(maze)
-    path1, is_completed1 = solver1(maze)      # delete
-
-    print(f"Solving time: {timeit.default_timer() - solver_time} seconds")
+    solving_time = time.time() - start_time
 
     if not is_completed:
-        return -1
+        raise CannotCompleteError(algo, path)
 
-    enlarge_time = timeit.default_timer()
-
+    start_time = time.time()
     large_image = enlarge_image(draw(image, path))
-    large_image1 = enlarge_image(draw(image, path1))      # delete
+    enlarging_time = time.time() - start_time
 
-    print(f"Enlarging: {timeit.default_timer() - enlarge_time} seconds")
-
-    print(f"Overall: {timeit.default_timer() - maze_time} seconds")
-
+    print(f"Building the maze: {maze_time} seconds\n"
+          f"Solving the maze: {solving_time} seconds\n"
+          f"Drawing the solution & enlarging the image: {enlarging_time} seconds")
     large_image.show()
-    large_image1.show()      # delete
-
-
-# works for left hand turn but not the rest
-# def draw(image, path):
-#     image_array = np.array(image.convert('RGB')).astype(np.uint8)
-#
-#     # define colors for solution and backtracking
-#     solution_color = [0, 255, 0]
-#     backtracking_color = [0, 64, 0]
-#
-#     # flag to track the first occurrence of a duplicated node
-#     duplicate_flag = False
-#
-#     for i, node in enumerate(path):
-#         y, x = node
-#
-#         is_duplicate = path.count(node) > 1
-#         color = backtracking_color if is_duplicate else solution_color
-#
-#         # if the current node is part of a duplicate substring, and it's the first occurrence, color as if not duplicate
-#         if is_duplicate and not duplicate_flag:
-#             image_array[y, x] = solution_color
-#             duplicate_flag = True
-#
-#         # if the current node is part of a duplicate substring, find the range of indices for this substring
-#         if is_duplicate:
-#             start_index = path.index(node)
-#             reversed_path = path[::-1]
-#             first_occurrence_index = reversed_path.index(node)
-#             end_index = len(path) - 1 - first_occurrence_index
-#
-#             # color everything between the first and last occurrence of the node
-#             for j in range(start_index + 1, end_index):
-#                 y_sub, x_sub = path[j]
-#                 image_array[y_sub, x_sub] = color
-#         else:
-#             # if the current node is not part of a duplicate substring, color it with the determined color
-#             image_array[y, x] = color
-#             duplicate_flag = False
-#
-#     return Im.fromarray(image_array)
 
 
 def draw(image, path):
     image_array = np.array(image.convert('RGB')).astype(np.uint8)
-    print(path)
+
+    solution_color = [0, 255, 0]
+    backtracking_color = [0, 64, 0]
+
+    unique, backtracking = find_backtracking(path)
 
     prev = path[0]
-    for node in path:
-        solution_color = [0, 255, 0]
-        backtracking_color = [0, 64, 0]
-
-        y, x = node
+    for position in path:
+        y, x = position
         y_prev, x_prev = prev
 
         min_y, max_y = min(y, y_prev), max(y, y_prev)
         min_x, max_x = min(x, x_prev), max(x, x_prev)
 
-        is_duplicate = path.count(node) > 1
-        color = backtracking_color if is_duplicate else solution_color
+        color = None
 
-        # the slicing operation will result in an empty array if  either min_y == max_y or min_x == max_x
-        if min_y == max_y:
-            image_array[min_y, min_x:max_x] = color
-        elif min_x == max_x:
-            image_array[min_y:max_y, min_x] = color
-        image_array[y, x] = color
+        if position in unique:
+            if prev not in backtracking:
+                color = solution_color
+        else:
+            color = backtracking_color
 
-        prev = node
+        if color is not None:
+            image_array[min_y:max_y + 1, min_x:max_x + 1] = color
+
+        prev = position
 
     return Im.fromarray(image_array)
 
 
+def find_backtracking(path):
+    """
+    Finds which parts of the path are appearing twice, therefore backtracking occurred there.
+    This is different from simply checking for duplicates, since the main path should be counted as 'unique' for
+    coloring, and dead-ends also need to be counted as backtracking.
+    Each sublist begins and ends with backtracked cells, not including the entrance to the sublist on the main path
+    """
+
+    unique = []
+    backtracking = []
+
+
+    for i, position in enumerate(path):
+        # start index of sub-lists of duplicates, where everything between the start and the end is a backtracked path
+        sublist_start = None
+        sublist_end = None
+
+        if (position in unique) and (position not in backtracking):
+            unique.remove(position)
+            backtracking.append(position)
+        else:
+            # move the first position in each backtracking sub-list to unique because it's a part of the main path
+            if path[i - 1] in backtracking:
+                sublist_start = path.index(path[i - 1]) + 1
+                sublist_end = i - 1
+
+                backtracking.remove(path[i - 1])
+                unique.append(path[i - 1])
+            unique.append(position)
+
+
+        # if sublist detected, every position inside it is defined as a backtracked cell
+        if sublist_start is not None:
+            for j in range(sublist_start, sublist_end):
+                curr = path[j]
+                if curr in unique:
+                    unique.remove(curr)
+                    backtracking.append(curr)
+
+    return unique, backtracking
 
 
 def enlarge_image(image):
-    original_width, original_height = image.size
-    max_size = 800
+    """
+    A manual enlarging function because Pillow interpolates to fill the gaps and stretches existing pixels,
+    therefore not suitable for enlarging bmp to a proper size
+    """
 
-    scale_factor = int(max_size / min(original_width, original_height))
+    original_width, original_height = image.size
+    new_size = 800      # the image and the maze can be much larger, but this size was chosen for viewing experience
+
+    scale_factor = int(new_size / min(original_width, original_height))
     enlarged_image = Im.new('RGB', (original_width * scale_factor, original_height * scale_factor))
 
     for x in range(original_width):

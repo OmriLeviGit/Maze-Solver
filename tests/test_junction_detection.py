@@ -6,7 +6,7 @@ from Maze import Maze
 from PIL import Image as Im
 
 
-class NeighborDetection(unittest.TestCase):
+class JunctionDetection(unittest.TestCase):
     def setUp(self):
         self.small_maze = Maze(Im.open("img/small_perfect.bmp").convert("L"))
         self.medium_maze = Maze(Im.open("img/medium_perfect.bmp").convert("L"))

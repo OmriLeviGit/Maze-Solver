@@ -27,7 +27,6 @@ def solve(maze):
         else:
             facing = turn_right(facing)  # Turn right or make a U-turn
 
-
         if position == maze.end.coordinate:
             is_completed = True
 

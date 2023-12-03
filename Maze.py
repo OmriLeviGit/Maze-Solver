@@ -6,7 +6,7 @@ class Maze:
         def __init__(self, coordinate):
             self.coordinate = coordinate
             self.neighbors: list = [None, None, None, None]
-            self.facing = None      # in algorithms where the direction of solving matters such as LH
+            self.facing = None      # in algorithms where the direction of solving matters such as LHT
 
     def __init__(self, image):
         self._array = np.array(image.point(lambda pixel: 255 if pixel > 127 else 0), dtype=np.uint8)
@@ -15,7 +15,7 @@ class Maze:
         self._nodes = []
 
         rows, columns = self._array.shape
-        top_dict = {}  # maps x value to the closed junction from above
+        top_dict = {}  # maps x_value to the closed junction from above
 
         # Process the first row
         for i in range(columns):

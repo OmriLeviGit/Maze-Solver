@@ -38,7 +38,9 @@ def solve(maze):
             break
 
         if not n_queue:
-            return -1
+            is_completed = False
+            end = curr
+            break
 
     path = []
     curr = end
