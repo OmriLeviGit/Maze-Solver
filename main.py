@@ -1,8 +1,6 @@
 import os
 import sys
 
-import argcomplete
-import argparse
 from PIL import Image as Im
 
 from process import process, CannotCompleteError
@@ -18,8 +16,8 @@ def main():
     chosen_algo = algorithms[2]
 
     if len(sys.argv) > 0 and len(sys.argv) == 3:
-        image_path = sys.argv[1]  # First command-line argument
-        chosen_algo = sys.argv[2]  # Second command-line argument
+        image_path = sys.argv[1]                    # First command-line argument
+        chosen_algo = sys.argv[2]                   # Second command-line argument
     else:
         print(f"Using the default maze \"{image_path}\" and algorithm \"{chosen_algo}\".")
 
