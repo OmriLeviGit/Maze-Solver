@@ -32,7 +32,7 @@ def process(image, algo):
     print(f"Building the maze: {maze_time} seconds\n"
           f"Solving the maze: {solving_time} seconds\n"
           f"Drawing the solution & enlarging the image: {enlarging_time} seconds")
-    large_image.show()
+    return large_image
 
 
 def draw(image, path):
@@ -78,7 +78,6 @@ def find_backtracking(path):
     unique = []
     backtracking = []
 
-
     for i, position in enumerate(path):
         # start index of sub-lists of duplicates, where everything between the start and the end is a backtracked path
         sublist_start = None
@@ -111,14 +110,14 @@ def find_backtracking(path):
 
 def enlarge_image(image):
     """
-    A manual enlarging function because Pillow interpolates to fill the gaps and stretches existing pixels,
-    therefore not suitable for enlarging bmp to a proper size
+    A manual enlarging function. Since Pillow interpolates to fill the gaps and stretches existing pixels,
+    therefore not suitable for enlarging bmp to a proper size.
     """
 
     original_width, original_height = image.size
-    new_size = 800      # the image and the maze can be much larger, but this size was chosen for viewing experience
+    size = 800      # if the image would be smaller than 800 x 800, enlarge it for better viewing experience
 
-    scale_factor = int(new_size / min(original_width, original_height))
+    scale_factor = int(max(size / min(original_width, original_height), 1))
     enlarged_image = Im.new('RGB', (original_width * scale_factor, original_height * scale_factor))
 
     for x in range(original_width):
@@ -127,4 +126,5 @@ def enlarge_image(image):
             for i in range(int(scale_factor)):
                 for j in range(int(scale_factor)):
                     enlarged_image.putpixel((int(x * scale_factor) + i, int(y * scale_factor) + j), original_pixel)
+
     return enlarged_image

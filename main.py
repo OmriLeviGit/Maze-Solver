@@ -1,21 +1,39 @@
 import os
 
+import argcomplete
+import argparse
 from PIL import Image as Im
+
 from process import process, CannotCompleteError
 
 
-# TODO fix the draw function to work on both lht and bfs
+# TODO make a good readme
 
 def main():
-    path = "img/very_large_perfect.bmp"
     image = None
+    solved_maze = None
+
     algorithms = ["breadth first search", "depth first search", "left hand turn"]
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image_name",
+                        help="Image name without path", nargs="?", default="101x101, Medium.bmp")
+    parser.add_argument("algorithm",
+                        help="Algorithm to use", choices=algorithms, nargs="?", default=algorithms[2])
+    argcomplete.autocomplete(parser)
+
+    args = parser.parse_args()
+    image_name = args.image_name
+    chosen_algo = args.algorithm
+
     try:
-        image = Im.open(path).convert("L")
-        process(image, algorithms[2])
+        image_path = os.path.join("input", image_name)
+
+        image = Im.open(image_path).convert("L")
+        image_name, _ = os.path.splitext(os.path.basename(image_path))
+        solved_maze = process(image, chosen_algo)
     except FileNotFoundError:
-        print(f"Error: The file {path} was not found.")
+        print(f"Error: The file {image_name} was not found.")
     except CannotCompleteError as e:
         print(f"Error: The maze could not be completed using the \"{e.args[0]}\" algorithm.")
         print(f"Path: {e.args[1]}")
@@ -24,6 +42,10 @@ def main():
     finally:
         if image is not None:
             image.close()
+
+    if solved_maze:
+        solved_maze.show()
+        solved_maze.save(f"output/{image_name} - {chosen_algo}.jpg", format="JPEG")
 
 
 if __name__ == '__main__':

@@ -8,8 +8,8 @@ from PIL import Image as Im
 
 class JunctionDetection(unittest.TestCase):
     def setUp(self):
-        self.small_maze = Maze(Im.open("img/small_perfect.bmp").convert("L"))
-        self.medium_maze = Maze(Im.open("img/medium_perfect.bmp").convert("L"))
+        self.small_maze = Maze(Im.open("input/small_perfect.bmp").convert("L"))
+        self.medium_maze = Maze(Im.open("input/medium_perfect.bmp").convert("L"))
 
     def test_small_perfect(self):
         array = self.small_maze.array
