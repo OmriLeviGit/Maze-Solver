@@ -7,19 +7,22 @@ from PIL import Image as Im
 from process import process, CannotCompleteError
 
 
-# TODO make a good readme
-
 def main():
     image = None
     solved_maze = None
-
     algorithms = ["breadth first search", "depth first search", "left hand turn"]
+
+    default_algo = algorithms[2]
+    default_image = "101x101, Medium.bmp"
+
+    default_algo = algorithms[0]
+    default_image = "1001x1001, Huge.bmp"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("image_name",
-                        help="Image name without path", nargs="?", default="101x101, Medium.bmp")
+                        help="Image name without path", nargs="?", default=default_image)
     parser.add_argument("algorithm",
-                        help="Algorithm to use", choices=algorithms, nargs="?", default=algorithms[2])
+                        help="Algorithm to use", choices=algorithms, nargs="?", default=default_algo)
     argcomplete.autocomplete(parser)
 
     args = parser.parse_args()

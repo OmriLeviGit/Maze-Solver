@@ -115,9 +115,13 @@ def enlarge_image(image):
     """
 
     original_width, original_height = image.size
-    size = 800      # if the image would be smaller than 800 x 800, enlarge it for better viewing experience
+    size = 600      # if one of the dimensions is smaller than size, enlarge the image for better viewing experience
 
     scale_factor = int(max(size / min(original_width, original_height), 1))
+
+    if scale_factor == 1:       # image larger than size, no need to enlarge
+        return image
+
     enlarged_image = Im.new('RGB', (original_width * scale_factor, original_height * scale_factor))
 
     for x in range(original_width):
