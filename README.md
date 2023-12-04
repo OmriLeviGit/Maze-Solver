@@ -17,7 +17,7 @@ The program operates under these specific assumptions:
 - There are two entrances — one at the top row and another at the bottom—each occupying a single pixel.
 - Apart from the entrances, the maze is entirely surrounded by a continuous black wall.
 
-Input images should be placed in the 'input' folder, and the corresponding solutions will be saved to the 'output' folder.
+Input images should be placed in the 'input' folder, and the corresponding solutions will be saved to a generated 'output' folder.
 
 The tool is able to solve any rectangle maze, not only squares.
 

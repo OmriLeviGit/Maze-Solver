@@ -1,4 +1,5 @@
 import os
+import sys
 
 import argcomplete
 import argparse
@@ -12,31 +13,23 @@ def main():
     solved_maze = None
     algorithms = ["breadth first search", "depth first search", "left hand turn"]
 
-    default_algo = algorithms[2]
-    default_image = "101x101, Medium.bmp"
+    # default
+    image_path = "input/101x101, Medium.bmp"
+    chosen_algo = algorithms[2]
 
-    default_algo = algorithms[2]
-    default_image = "101x101, Medium.bmp"
+    if len(sys.argv) > 0 and len(sys.argv) == 3:
+        image_path = sys.argv[1]  # First command-line argument
+        chosen_algo = sys.argv[2]  # Second command-line argument
+    else:
+        print(f"Using the default maze \"{image_path}\" and algorithm \"{chosen_algo}\".")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("image_name",
-                        help="Image name without path", nargs="?", default=default_image)
-    parser.add_argument("algorithm",
-                        help="Algorithm to use", choices=algorithms, nargs="?", default=default_algo)
-    argcomplete.autocomplete(parser)
-
-    args = parser.parse_args()
-    image_name = args.image_name
-    chosen_algo = args.algorithm
+    image_name, _ = os.path.splitext(os.path.basename(image_path))
 
     try:
-        image_path = os.path.join("input", image_name)
-
         image = Im.open(image_path).convert("L")
-        image_name, _ = os.path.splitext(os.path.basename(image_path))
         solved_maze = process(image, chosen_algo)
     except FileNotFoundError:
-        print(f"Error: The file {image_name} was not found.")
+        print(f"Error: The file {image_path} was not found.")
     except CannotCompleteError as e:
         print(f"Error: The maze could not be completed using the \"{e.args[0]}\" algorithm.")
         print(f"Path: {e.args[1]}")
@@ -48,6 +41,11 @@ def main():
 
     if solved_maze:
         solved_maze.show()
+
+        output_folder = "output"
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+
         solved_maze.save(f"output/{image_name} - {chosen_algo}.jpg", format="JPEG")
 
 

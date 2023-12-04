@@ -31,7 +31,7 @@ def process(image, algo):
 
     print(f"Initializing the maze: {maze_time} seconds\n"
           f"Solving the maze: {solving_time} seconds\n"
-          f"Drawing the solution & enlarging the image: {enlarging_time} seconds")
+          f"Drawing the solution & Enlarging the image: {enlarging_time} seconds")
     return large_image
 
 
