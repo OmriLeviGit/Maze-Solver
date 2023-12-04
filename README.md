@@ -25,11 +25,11 @@ The tool is able to solve any rectangle maze, not only squares.
 ## How It Works
 The program follows these key steps:
 
-1. **Maze Building Phase:** The program scans the BMP file from the top-left to the bottom-right, identifying junctions, including the entrances.
+1. **Maze Initializing Phase:** The program scans the BMP file from the top-left to the bottom-right, identifying junctions, including the entrances.
 
 2. **Solving Phase:** For node-based algorithms, junctions serve as nodes, and the chosen algorithm is executed. For the LHT algorithm, the program iterates through each step, regardless of junctions, until it reaches the end.
 
-3. **Drawing:** The program takes the traversed path from the start to the end, applies coloring, and enlarges the image if necessary for a clearer visualization.
+3. **Drawing Phase:** The program takes the traversed path from the start to the end, applies coloring, and enlarges the image if necessary for a clearer visualization.
 
 ### [Examples](https://github.com/OmriLeviGit/Maze-Solver/tree/main/examples)
 Each example offers a visual representation of the software's capabilities, showcasing how it navigates through mazes using various algorithms.

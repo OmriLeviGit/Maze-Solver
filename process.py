@@ -29,7 +29,7 @@ def process(image, algo):
     large_image = enlarge_image(draw(image, path))
     enlarging_time = time.time() - start_time
 
-    print(f"Building the maze: {maze_time} seconds\n"
+    print(f"Initializing the maze: {maze_time} seconds\n"
           f"Solving the maze: {solving_time} seconds\n"
           f"Drawing the solution & enlarging the image: {enlarging_time} seconds")
     return large_image

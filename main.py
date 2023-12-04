@@ -15,6 +15,9 @@ def main():
     default_algo = algorithms[2]
     default_image = "101x101, Medium.bmp"
 
+    default_algo = algorithms[2]
+    default_image = "101x101, Medium.bmp"
+
     parser = argparse.ArgumentParser()
     parser.add_argument("image_name",
                         help="Image name without path", nargs="?", default=default_image)
