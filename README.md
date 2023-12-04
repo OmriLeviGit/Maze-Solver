@@ -1,6 +1,6 @@
 # Maze-Solver
 
-![Maze Solver](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/151x151,%20Large%20-%20breadth%20first%20search.jpg?raw=true)
+![Maze Solver](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/151x151%2C%20Large%20-%20breadth%20first%20search.jpg?raw=true)
 
 ## About
 Maze-Solver is a software tool designed for solving mazes effectively using various algorithms.
