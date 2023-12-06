@@ -12,8 +12,8 @@ def main():
     algorithms = ["breadth first search", "depth first search", "left hand turn", "dijkstra"]
 
     # default
-    image_path = "input/1001x1001, Huge.bmp"
-    chosen_algo = algorithms[3]
+    image_path = "input/101x101, Medium.bmp"
+    chosen_algo = algorithms[0]
 
     if len(sys.argv) > 0 and len(sys.argv) == 3:
         image_path = sys.argv[1]                    # First command-line argument

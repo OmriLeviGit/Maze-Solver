@@ -3,9 +3,9 @@
 def solve(maze):
     y_start, x_start = maze.start.coordinates
     start_direction = ''
-    if y_start == 0:  # starting at the top, heading down
+    if y_start == 0:                    # starting at the top, heading down
         start_direction = 'S'
-    if x_start == 0:  # starting at the left, heading right
+    if x_start == 0:                    # starting at the left, heading right
         start_direction = 'E'
     if y_start == maze.array.shape[0]:  # starting at the bottom, heading up
         start_direction = 'N'
@@ -25,7 +25,7 @@ def solve(maze):
             position = move_forward(facing, position)
             path.append(position)
         else:
-            facing = turn_right(facing)  # Turn right or make a U-turn
+            facing = turn_right(facing)     # Turn right or make a U-turn
 
         if position == maze.end.coordinates:
             is_completed = True

@@ -6,6 +6,7 @@ from enum import Enum
 # Dijkstra
 
 class State(Enum):
+    NOT_FOUND = 0
     FOUND = 1
     VISITED = 2
 
@@ -36,8 +37,6 @@ def solve(maze):
         if curr is maze.end:
             is_completed = True
             break
-
-        print(curr.coordinates)
 
         for n in curr.neighbors:
             if n is None or visited[n.coordinates] == State.VISITED.value:
