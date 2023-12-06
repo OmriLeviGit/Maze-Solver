@@ -1,7 +1,7 @@
 # Left Hand Turn
 
 def solve(maze):
-    y_start, x_start = maze.start.coordinate
+    y_start, x_start = maze.start.coordinates
     start_direction = ''
     if y_start == 0:  # starting at the top, heading down
         start_direction = 'S'
@@ -13,7 +13,7 @@ def solve(maze):
         start_direction = 'W'
 
     facing = start_direction
-    position = maze.start.coordinate
+    position = maze.start.coordinates
     array = maze.array
     is_completed = False
     path = [position]
@@ -27,7 +27,7 @@ def solve(maze):
         else:
             facing = turn_right(facing)  # Turn right or make a U-turn
 
-        if position == maze.end.coordinate:
+        if position == maze.end.coordinates:
             is_completed = True
 
     return path, is_completed

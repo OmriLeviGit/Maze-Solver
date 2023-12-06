@@ -8,6 +8,9 @@ def create_solver(algorithm_name):
     elif algorithm_name == "left hand turn":
         from algorithms import LHT
         return LHT.solve
+    elif algorithm_name == "dijkstra":
+        from algorithms import dijkstra
+        return dijkstra.solve
     else:
         print(f"Unsupported algorithm: {algorithm_name}, used BFS instead")
         from algorithms import BFS

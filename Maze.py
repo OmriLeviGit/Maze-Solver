@@ -3,10 +3,20 @@ import numpy as np
 
 class Maze:
     class Node:
-        def __init__(self, coordinate):
-            self.coordinate = coordinate
+        def __init__(self, coordinates):
+            self.coordinates = coordinates
             self.neighbors: list = [None, None, None, None]
-            self.facing = None      # in algorithms where the direction of solving matters such as LHT
+            self.distance = float('inf')
+
+        def __lt__(self, other):
+            return self.distance < other.distance
+
+        def distance_to(self, other):
+            y_n1, x_n1 = self.coordinates
+            y_n2, x_n2 = other.coordinates
+
+            return abs(y_n2 - y_n1) + abs(x_n2 - x_n1)
+
 
     def __init__(self, image):
         self._array = np.array(image.point(lambda pixel: 255 if pixel > 127 else 0), dtype=np.uint8)
@@ -22,11 +32,11 @@ class Maze:
             if self._array[0][i]:
                 self._start = Maze.Node((0, i))
                 self._nodes.append(self._start)
-                top_dict[self._start.coordinate[1]] = self._start
+                top_dict[self._start.coordinates[1]] = self._start
                 break
 
         # find junctions and attach neighbors
-        top_dict = {self._start.coordinate[1]: self._start}  # maps x value to the closed junction from above
+        top_dict = {self._start.coordinates[1]: self._start}  # maps x value to the closed junction from above
 
         for i in range(1, rows - 1):
             node_left = None  # node that will use as a left neighbor for future nodes

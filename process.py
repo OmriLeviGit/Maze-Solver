@@ -3,7 +3,7 @@ import time
 import numpy as np
 from PIL import Image as Im
 from Maze import Maze
-from algo_factory import create_solver
+from factory import create_solver
 
 
 class CannotCompleteError(Exception):
@@ -127,6 +127,7 @@ def enlarge_image(image):
     for x in range(original_width):
         for y in range(original_height):
             original_pixel = image.getpixel((x, y))
+
             for i in range(int(scale_factor)):
                 for j in range(int(scale_factor)):
                     enlarged_image.putpixel((int(x * scale_factor) + i, int(y * scale_factor) + j), original_pixel)
