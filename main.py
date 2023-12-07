@@ -4,7 +4,7 @@ import sys
 
 from PIL import Image as Im
 
-from process import process, CannotCompleteError
+from maze_solver import maze_solver, CannotCompleteError
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
 
     try:
         image = Im.open(image_path).convert("L")
-        solved_maze = process(image, chosen_algo)
+        solved_maze = maze_solver(image, chosen_algo)
     except FileNotFoundError:
         print(f"Error: The file {image_path} was not found.")
     except CannotCompleteError as e:

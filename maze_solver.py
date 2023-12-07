@@ -11,7 +11,7 @@ class CannotCompleteError(Exception):
     pass
 
 
-def process(image, algo):
+def maze_solver(image, algo):
     start_time = time.time()
     maze = Maze(image)
     maze_time = time.time() - start_time
