@@ -12,16 +12,18 @@ class State(Enum):
 
 
 def solve(maze):
-    end = maze.end
     is_completed = False
+
+    start = maze.start
+    end = maze.end
+    parent_dict = {start: None}
+
+    heap = Heap()
+    heap.push(start)
 
     # create a boolean array 'visited' to keep track of visited locations in the maze
     visited = np.zeros(maze.array.shape, dtype=np.uint8)
-    parent_dict = {}
-    heap = Heap()
-
-    maze.start.distance = 0
-    heap.push(maze.start)
+    start.distance = 0
 
     while True:
         if heap.is_empty():
@@ -29,7 +31,7 @@ def solve(maze):
 
         curr = heap.pop()
 
-        while visited[curr.coordinates] == State.VISITED:
+        while visited[curr.coordinates] == State.VISITED.value:
             curr = heap.pop()
 
         visited[curr.coordinates] = State.VISITED.value
@@ -43,7 +45,7 @@ def solve(maze):
                 continue
 
             # mark neighbor as found and push it to the heap
-            if visited[n.coordinates] != State.FOUND:
+            if visited[n.coordinates] != State.FOUND.value:
                 visited[n.coordinates] = State.FOUND.value
                 heap.push(n)
 
@@ -59,11 +61,9 @@ def solve(maze):
 
     path = []
     curr = end
-
     while curr in parent_dict:
         path.append(curr.coordinates)
         curr = parent_dict.get(curr)
 
-    path.append(maze.start.coordinates)  # add the start to the path
 
     return path, is_completed

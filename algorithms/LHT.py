@@ -1,6 +1,8 @@
 # Left Hand Turn
 
 def solve(maze):
+    is_completed = False
+
     y_start, x_start = maze.start.coordinates
     start_direction = ''
     if y_start == 0:                    # starting at the top, heading down
@@ -14,14 +16,12 @@ def solve(maze):
 
     facing = start_direction
     position = maze.start.coordinates
-    array = maze.array
-    is_completed = False
     path = [position]
 
     while not is_completed:
-        if left_is_clear(facing, position, array):
+        if left_is_clear(facing, position, maze.array):
             facing = turn_left(facing)
-        if front_is_clear(facing, position, array):
+        if front_is_clear(facing, position, maze.array):
             position = move_forward(facing, position)
             path.append(position)
         else:

@@ -5,6 +5,8 @@ from PIL import Image as Im
 
 from process import process, CannotCompleteError
 
+# TODO items do not clear properly from the heap, might be a problem with the logic inside dijkstra so check it first
+# todo do a_star algorithm
 
 def main():
     image = None

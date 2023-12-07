@@ -6,16 +6,17 @@ import numpy as np
 # Breadth First Search
 
 def solve(maze):
-    end = maze.end
     is_completed = False
-    parent_dict = {}
+
+    start = maze.start
+    end = maze.end
+    parent_dict = {start: None}
+
+    n_queue = deque()
+    n_queue.append(start)
 
     # Create a boolean array 'visited' to keep track of visited locations in the maze
     visited = np.full(maze.array.shape, False, dtype=bool)
-
-    n_queue = deque()
-    n_queue.append(maze.start)
-    visited[maze.start.coordinates] = True
 
     while n_queue:
         curr = n_queue.popleft()
@@ -43,11 +44,8 @@ def solve(maze):
 
     path = []
     curr = end
-
     while curr in parent_dict:
         path.append(curr.coordinates)
         curr = parent_dict.get(curr)
-
-    path.append(maze.start.coordinates)  # add the start to the path
 
     return path, is_completed
