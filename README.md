@@ -1,11 +1,12 @@
 # Maze-Solver
 
-![201x201 Maze](examples%2F201x201%2C%20Very%20Large%20-%20left%20hand%20turn.jpg)
+
+![101x101, Medium - depth first search.jpg](examples%2F101x101%2C%20Medium%20-%20depth%20first%20search.jpg)
 
 ## About
-Maze-Solver is a software tool designed for solving mazes effectively using various algorithms.
-The generated paths are highlighted in green, with backtracked cells in a darker shade for algorithms employing backtracking, such as the Left-Hand turn (LHT) algorithm.
-Note that LHT solutions may contain white paths in island areas, where connections are not possible using left turns only.
+Maze-Solver is a software tool designed for solving mazes effectively using various algorithms.  
+The generated paths are highlighted in green, with backtracked cells in a darker shade for algorithms employing backtracking, such as the Left-Hand turn (LHT) algorithm.  
+Note that LHT solutions may contain white paths in island areas, where connections are not possible using left turns only.  
 
 All mazes showcased here were generated using [Daedalus](https://www.astrolog.org/labyrnth/daedalus.htm), but the tool will work on any maze that adheres the assumptions below.
 
@@ -14,13 +15,12 @@ The program operates under these specific assumptions:
 
 - Walls are represented in black, while the path is depicted in white.
 - The width of each path is precisely 1 pixel.
-- There are two entrances — one at the top row and another at the bottom—each occupying a single pixel.
+- There are two entrances — one at the top row and another at the bottom, each occupying a single pixel.
 - Apart from the entrances, the maze is entirely surrounded by a continuous black wall.
 
-Input images should be placed in the 'input' folder, and the corresponding solutions will be saved to a generated 'output' folder.
+It is recommended that input images will be placed in the 'input' folder.
 
-The tool is able to solve any rectangle maze, not only squares.
-
+Note: The tool is capable of solving mazes of any rectangular shape, and not limited to squares.
 
 ## How It Works
 The program follows these key steps:
@@ -31,7 +31,10 @@ The program follows these key steps:
 
 3. **Drawing Phase:** The program takes the traversed path from the start to the end, applies coloring, and enlarges the image if necessary for a clearer visualization.
 
-Each step is timed separately and the duration is printed at the end.
+The duration of each step is measured individually, and the corresponding timings are displayed at the conclusion of the process.
+
+In addition, the image of the solved maze will be saved to a generated 'output' folder.
+
 
 ### [Examples](https://github.com/OmriLeviGit/Maze-Solver/tree/main/examples)
 Each example offers a visual representation of the software's capabilities, showcasing how it navigates through mazes using various algorithms.
