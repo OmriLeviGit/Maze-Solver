@@ -1,6 +1,6 @@
 # Maze-Solver
 
-![Maze Solver](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/151x151%2C%20Large%20-%20breadth%20first%20search.jpg?raw=true)
+![201x201 Maze](examples%2F201x201%2C%20Very%20Large%20-%20left%20hand%20turn.jpg)
 
 ## About
 Maze-Solver is a software tool designed for solving mazes effectively using various algorithms.
@@ -25,11 +25,13 @@ The tool is able to solve any rectangle maze, not only squares.
 ## How It Works
 The program follows these key steps:
 
-1. **Maze Initializing Phase:** The program scans the BMP file from the top-left to the bottom-right, identifying junctions, including the entrances.
+1. **Maze Initializing Phase:** The program scans the BMP file from the top-left to the bottom-right, identifying junctions and entrances.
 
 2. **Solving Phase:** For node-based algorithms, junctions serve as nodes, and the chosen algorithm is executed. For the LHT algorithm, the program iterates through each step, regardless of junctions, until it reaches the end.
 
 3. **Drawing Phase:** The program takes the traversed path from the start to the end, applies coloring, and enlarges the image if necessary for a clearer visualization.
+
+Each step is timed separately and the duration is printed at the end.
 
 ### [Examples](https://github.com/OmriLeviGit/Maze-Solver/tree/main/examples)
 Each example offers a visual representation of the software's capabilities, showcasing how it navigates through mazes using various algorithms.
