@@ -1,3 +1,4 @@
+import cProfile
 import os
 import sys
 
@@ -5,23 +6,22 @@ from PIL import Image as Im
 
 from process import process, CannotCompleteError
 
-# TODO items do not clear properly from the heap, might be a problem with the logic inside dijkstra so check it first
-# todo do a_star algorithm
 
 def main():
     image = None
     solved_maze = None
-    algorithms = ["breadth first search", "depth first search", "left hand turn", "dijkstra"]
+    algorithms = ["breadth first search", "depth first search", "left hand turn", "dijkstra", "a star"]
 
     # default
     image_path = "input/101x101, Medium.bmp"
     chosen_algo = algorithms[0]
 
     if len(sys.argv) > 0 and len(sys.argv) == 3:
-        image_path = sys.argv[1]                    # First command-line argument
-        chosen_algo = sys.argv[2]                   # Second command-line argument
+        image_path = sys.argv[1]        # First command-line argument
+        chosen_algo = sys.argv[2]       # Second command-line argument
+        print(f"solving the maze \"{image_path}\" using the algorithm \"{chosen_algo}\".")
     else:
-        print(f"Using the default maze \"{image_path}\" and algorithm \"{chosen_algo}\".")
+        print(f"solving the default maze \"{image_path}\" using the algorithm \"{chosen_algo}\".")
 
     image_name, _ = os.path.splitext(os.path.basename(image_path))
 
@@ -40,7 +40,7 @@ def main():
             image.close()
 
     if solved_maze:
-        solved_maze.show()
+        # solved_maze.show()
 
         output_folder = "output"
         if not os.path.exists(output_folder):
@@ -51,3 +51,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

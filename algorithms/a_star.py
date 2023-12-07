@@ -3,7 +3,7 @@ from Heap import Heap
 from enum import Enum
 
 
-# Dijkstra
+# A Star
 
 class State(Enum):
     NOT_FOUND = 0
@@ -12,8 +12,10 @@ class State(Enum):
 
 
 def solve(maze):
-    apply_dijkstra(maze)
+    apply_a_star(maze)
     is_completed = False
+
+
 
     start = maze.start
     end = maze.end
@@ -48,11 +50,12 @@ def solve(maze):
             # distance from start to neighbor through current node
             distance_from_start = curr.distance + n.distance_to(curr)
 
-            if n.distance <= distance_from_start:
+            if n.distance <= distance_from_start:   # if the old distance is smaller, so is the total cost
                 continue
 
-            # if the new distance is shorter, update the distance and parent of neighbor.
+            # if the new distance is shorter, update the distance, cost and parent of neighbor.
             n.distance = distance_from_start
+            n.total_cost = distance_from_start + n.heuristic
             parent_dict[n] = curr
 
             # if neighbor was found before, remove it from the heap and push again to reorder the heap
@@ -72,13 +75,17 @@ def solve(maze):
     return path, is_completed
 
 
-def apply_dijkstra(maze):
+def apply_a_star(maze):
     """
-    Adds each node a 'distance' attribute, and a comparator between nodes.
-    The distance attribute: the distance from the start node, and is defaulted to 'inf'.
+    Adds each node, 'distance', 'heuristic' and total cost attributes, and a comparator between nodes.
+    The distance attribute: the distance from the start, and is defaulted to 'inf'.
+    The heuristic attribute: the estimated distance from the current node to the end node.
+    The total cost: the sum of the distance and heuristic
     """
 
     for n in maze.nodes:
         n.distance = float("inf")
+        n.heuristic = n.distance_to(maze.end)
+        n.total_cost = float("inf")
 
-    maze.Node.__lt__ = lambda self, other: self.distance < other.distance
+    maze.Node.__lt__ = lambda self, other: self.total_cost < other.total_cost

@@ -24,42 +24,50 @@ class HeapFunctionality(unittest.TestCase):
         self.assertTrue(self.heap.is_empty())
 
     def test_update_distance_no_order_change(self):
+        Maze.Node.__lt__ = lambda self, other: self.value < other.value
+
         node1 = Maze.Node((0, 1))
         node2 = Maze.Node((2, 3))
-        node1.distance = 10
-        node2.distance = 11
+        node1.value = 10
+        node2.value = 11
 
         self.heap.push(node1)
         self.heap.push(node2)
 
-        self.heap.update_distance(9, node1)
-        self.heap.update_distance(12, node2)
+        node1.value = 9
+        node2.value = 12
+        self.heap.remove_push(node1)
+        self.heap.remove_push(node2)
 
         n_node1 = self.heap.pop()
         n_node2 = self.heap.pop()
 
-        self.assertEqual(node1, n_node1)
-        self.assertEqual(9, n_node1.distance)
-        self.assertEqual(node2, n_node2)
-        self.assertEqual(12, n_node2.distance)
+        self.assertIs(node1, n_node1)
+        self.assertEqual(9, n_node1.value)
+        self.assertIs(node2, n_node2)
+        self.assertEqual(12, n_node2.value)
 
     def test_update_distance_order_change(self):
+        Maze.Node.__lt__ = lambda self, other: self.value < other.value
+
         node1 = Maze.Node((0, 1))
         node2 = Maze.Node((2, 3))
-        node1.distance = 10
-        node2.distance = 11
+        node1.value = 10
+        node2.value = 11
 
         self.heap.push(node1)
         self.heap.push(node2)
 
-        self.heap.update_distance(12, node1)
-        self.heap.update_distance(9, node2)
+        node1.value = 12
+        node2.value = 9
+        self.heap.remove_push(node1)
+        self.heap.remove_push(node2)
 
         n_node1 = self.heap.pop()
         n_node2 = self.heap.pop()
 
         # check if the order was swapped according to the new value
-        self.assertEqual(node2, n_node1)
-        self.assertEqual(9, n_node1.distance)
-        self.assertEqual(node1, n_node2)
-        self.assertEqual(12, n_node2.distance)
+        self.assertIs(node2, n_node1)
+        self.assertEqual(9, n_node1.value)
+        self.assertIs(node1, n_node2)
+        self.assertEqual(12, n_node2.value)

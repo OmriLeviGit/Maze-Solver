@@ -5,17 +5,19 @@ class Maze:
     class Node:
         def __init__(self, coordinates):
             self.coordinates = coordinates
-            self.neighbors: list = [None, None, None, None]
-            self.distance = float('inf')
-
-        def __lt__(self, other):
-            return self.distance < other.distance
+            self.neighbors: list = [None] * 4
 
         def distance_to(self, other):
+            """
+            Calculate the Manhattan distance between two nodes in a grid-based system.
+
+            Since the Euclidean distance considers straight lines that may not be applicable in grid-based movement,
+            and can overestimate the path for the A* algorithm, the Manhattan distance is used.
+            """
             y_n1, x_n1 = self.coordinates
             y_n2, x_n2 = other.coordinates
 
-            return abs(y_n2 - y_n1) + abs(x_n2 - x_n1)
+            return abs(y_n2 - y_n1) + abs(x_n2 - x_n1)  # Manhattan distance
 
 
     def __init__(self, image):

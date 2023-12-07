@@ -29,9 +29,9 @@ def process(image, algo):
     large_image = enlarge_image(draw(image, path))
     enlarging_time = time.time() - start_time
 
-    print(f"Initializing the maze: {maze_time} seconds\n"
-          f"Solving the maze: {solving_time} seconds\n"
-          f"Drawing the solution & Enlarging the image: {enlarging_time} seconds")
+    print(f"Initializing the maze: {maze_time} seconds")
+    print(f"Solving the maze: {solving_time} seconds")
+    print(f"Drawing the solution & Enlarging the image: {enlarging_time} seconds")
     return large_image
 
 
@@ -69,10 +69,23 @@ def draw(image, path):
 
 def find_backtracking(path):
     """
-    Finds which parts of the path are appearing twice, therefore backtracking occurred there.
-    This is different from simply checking for duplicates, since the main path should be counted as 'unique' for
-    coloring, and dead-ends also need to be counted as backtracking.
-    Each sublist begins and ends with backtracked cells, not including the entrance to the sublist on the main path
+    Identify backtracking occurrences in a path, considering dead-ends as backtracking, but the first
+    (and last) cell is not considered backtracking.
+
+    Parameters:
+    - path (list): The path to analyze for backtracking.
+
+    Returns:
+    - tuple: A tuple containing two lists:
+    - List of unique cells on the main path.
+    - List of cells where backtracking occurred.
+
+    Example:
+    path = [(0, 0), (1, 0), (2, 0), (1, 0), (0, 0)]
+    unique_cells, backtracking_cells = find_backtracking(path)
+
+    unique_cells == [(0, 0)]
+    backtracking_cells == [(1, 0), (2, 0)]
     """
 
     unique = []
@@ -96,7 +109,6 @@ def find_backtracking(path):
                 unique.append(path[i - 1])
             unique.append(position)
 
-
         # if sublist detected, every position inside it is defined as a backtracked cell
         if sublist_start is not None:
             for j in range(sublist_start, sublist_end):
@@ -110,16 +122,20 @@ def find_backtracking(path):
 
 def enlarge_image(image):
     """
-    A manual enlarging function. Since Pillow interpolates to fill the gaps and stretches existing pixels,
-    therefore not suitable for enlarging bmp to a proper size.
+    Manually enlarge an image without interpolation, suitable for BMP images to maintain pixel integrity.
+
+    Note:
+    Since Pillow interpolates to fill the gaps and stretches existing pixels,
+    it is not suitable for enlarging BMP images to a proper size.
+    This manual enlargement preserves pixel integrity without interpolation.
     """
 
     original_width, original_height = image.size
-    size = 600      # if one of the dimensions is smaller than size, enlarge the image for better viewing experience
+    size = 600  # if one of the dimensions is smaller than size, enlarge the image for better viewing experience
 
     scale_factor = int(max(size / min(original_width, original_height), 1))
 
-    if scale_factor == 1:       # image larger than size, no need to enlarge
+    if scale_factor == 1:  # image larger than size, no need to enlarge
         return image
 
     enlarged_image = Im.new('RGB', (original_width * scale_factor, original_height * scale_factor))

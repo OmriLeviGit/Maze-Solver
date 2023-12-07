@@ -30,7 +30,7 @@ def solve(maze):
             parent_dict[neighbor] = curr
             n_queue.append(neighbor)
 
-            if neighbor is end:
+            if curr.coordinates == end.coordinates:
                 is_completed = True
                 break
 
