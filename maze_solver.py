@@ -15,12 +15,14 @@ def maze_solver(image, algo):
     start_time = time.time()
     maze = Maze(image)
     maze_time = time.time() - start_time
+    print(f"Initializing the maze: {maze_time} seconds.")
 
     solver = create_solver(algo)
 
     start_time = time.time()
     path, is_completed = solver(maze)
     solving_time = time.time() - start_time
+    print(f"Solving the maze: {solving_time} seconds.")
 
     if not is_completed:
         raise CannotCompleteError(algo, path)
@@ -28,10 +30,8 @@ def maze_solver(image, algo):
     start_time = time.time()
     large_image = enlarge_image(draw(image, path))
     enlarging_time = time.time() - start_time
+    print(f"Drawing the solution & Enlarging the image: {enlarging_time} seconds.\n")
 
-    print(f"Initializing the maze: {maze_time} seconds")
-    print(f"Solving the maze: {solving_time} seconds")
-    print(f"Drawing the solution & Enlarging the image: {enlarging_time} seconds")
     return large_image
 
 

@@ -14,8 +14,6 @@ class Heap:
         return None
 
     def remove_push(self, node):
-        # for some reason using an indices dict instead of remove gave much worse performance,
-        # might update in the future
         self.heap.remove(node)
         self.push(node)
 

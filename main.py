@@ -1,4 +1,3 @@
-import cProfile
 import os
 import sys
 
@@ -7,27 +6,13 @@ from PIL import Image as Im
 from maze_solver import maze_solver, CannotCompleteError
 
 
-def main():
+
+def solve_maze(image_path, chosen_algo):
     image = None
-    solved_maze = None
-    algorithms = ["breadth first search", "depth first search", "left hand turn", "dijkstra", "a star"]
-
-    # default
-    image_path = "input/101x101, Medium.bmp"
-    chosen_algo = algorithms[0]
-
-    if len(sys.argv) > 0 and len(sys.argv) == 3:
-        image_path = sys.argv[1]        # First command-line argument
-        chosen_algo = sys.argv[2]       # Second command-line argument
-        print(f"solving the maze \"{image_path}\" using the algorithm \"{chosen_algo}\".")
-    else:
-        print(f"solving the default maze \"{image_path}\" using the algorithm \"{chosen_algo}\".")
-
-    image_name, _ = os.path.splitext(os.path.basename(image_path))
 
     try:
         image = Im.open(image_path).convert("L")
-        solved_maze = maze_solver(image, chosen_algo)
+        return maze_solver(image, chosen_algo)
     except FileNotFoundError:
         print(f"Error: The file {image_path} was not found.")
     except CannotCompleteError as e:
@@ -39,16 +24,41 @@ def main():
         if image is not None:
             image.close()
 
-    if solved_maze:
-        # solved_maze.show()
+    return None
 
+
+def main():
+    # list of available algorithms
+    algorithms = ["breadth first search", "depth first search", "left hand turn", "dijkstra", "a star"]
+
+    # default values
+    image_path = "input/101x101, Medium.bmp"
+    chosen_algo = algorithms[0]
+    solving_message = f"Solving the default maze \"{image_path}\" using the algorithm \"{chosen_algo}\":"
+
+    # check for command-line arguments
+    if len(sys.argv) == 3:
+        image_path = sys.argv[1]  # First command-line argument
+        chosen_algo = sys.argv[2]  # Second command-line argument
+        solving_message = f"Solving the maze \"{image_path}\" using the algorithm \"{chosen_algo}\":"
+
+    print(solving_message, "\n")
+    image_name, _ = os.path.splitext(os.path.basename(image_path))
+
+    # call solve_maze function to handle maze solving and potential errors
+    solved_maze = solve_maze(image_path, chosen_algo)
+
+    # check if the maze was successfully solved
+    if solved_maze:
         output_folder = "output"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
-        solved_maze.save(f"output/{image_name} - {chosen_algo}.jpg", format="JPEG")
+        output_path = os.path.join(output_folder, f"{image_name} - {chosen_algo}.jpg")
+
+        solved_maze.save(output_path, format="JPEG")
+        print(f"Solution saved to {output_path}.")
 
 
 if __name__ == '__main__':
     main()
-

@@ -15,8 +15,6 @@ def solve(maze):
     apply_a_star(maze)
     is_completed = False
 
-
-
     start = maze.start
     end = maze.end
     parent_dict = {start: None}
