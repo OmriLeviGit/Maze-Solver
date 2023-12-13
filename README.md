@@ -1,7 +1,12 @@
 # Maze-Solver
 
 
-![101x101, Medium - depth first search.jpg](examples%2F101x101%2C%20Medium%20-%20depth%20first%20search.jpg)
+<table>
+  <tr>
+    <td><img src="examples/101X101, Medium - Depth First Search.jpg" alt="DFS" width="402" height="402"></td>
+    <td><img src="examples/201X201, Very Large - Left Hand Turn.jpg" alt="LHT" width="402" height="402"></td>
+  </tr>
+</table>
 
 ## About
 Maze-Solver is a software tool designed for solving mazes effectively using various algorithms.  
