@@ -28,43 +28,11 @@ def maze_solver(image, algo):
         raise CannotCompleteError(algo, path)
 
     start_time = time.time()
-    large_image = enlarge_image(draw(image, path))
+    large_image = enlarge_image(draw(image, path, algo))
     enlarging_time = time.time() - start_time
     print(f"Drawing the solution & Enlarging the image: {enlarging_time} seconds.\n")
 
     return large_image
-
-
-def draw(image, path):
-    image_array = np.array(image.convert('RGB')).astype(np.uint8)
-
-    solution_color = [0, 255, 0]
-    backtracking_color = [0, 64, 0]
-
-    unique, backtracking = find_backtracking(path)
-
-    prev = path[0]
-    for position in path:
-        y, x = position
-        y_prev, x_prev = prev
-
-        min_y, max_y = min(y, y_prev), max(y, y_prev)
-        min_x, max_x = min(x, x_prev), max(x, x_prev)
-
-        color = None
-
-        if position in unique:
-            if prev not in backtracking:
-                color = solution_color
-        else:
-            color = backtracking_color
-
-        if color is not None:
-            image_array[min_y:max_y + 1, min_x:max_x + 1] = color
-
-        prev = position
-
-    return Im.fromarray(image_array)
 
 
 def find_backtracking(path):
@@ -118,6 +86,63 @@ def find_backtracking(path):
                     backtracking.append(curr)
 
     return unique, backtracking
+
+
+def calculate_color(i, length, algo):
+    solution_color = [0, 255, 0]        # default
+    backtracking_color = [0, 64, 0]     # default
+
+    if algo == "breadth first search" or algo == "bfs":
+        scaler = int((i / length) * 50)
+        solution_color = [50 - scaler, 255 - scaler * 3, 150 - scaler * 2]
+    elif algo == "depth first search" or algo == "dfs":
+        scaler = int((i / length) * 50)
+        solution_color = [50 - scaler, 255 - scaler * 3, 50 - scaler]
+    elif algo == "left hand turn" or algo == "lht":
+        scaler = int((i / length) * 50)
+        solution_color = [255 - scaler, 102 - scaler * 2, 178 - scaler * 3.5]
+        backtracking_color = [color / 1.7 for color in solution_color]      # dimmer version of the solution color
+    elif algo == "dijkstra":
+        scaler = int((i / length) * 100)
+        solution_color = [0, 200 - scaler, 200 - scaler]
+    elif algo == "a star":
+        scaler = int((i / length) * 100)
+        solution_color = [204, 204 - scaler, 0]
+
+    return solution_color, backtracking_color
+
+
+
+
+def draw(image, path, algo):
+    image_array = np.array(image.convert('RGB')).astype(np.uint8)
+
+    unique, backtracking = find_backtracking(path)
+
+    prev = path[0]
+    for i, position in enumerate(path):
+        solution_color, backtracking_color = calculate_color(i, len(path), algo)
+
+        y, x = position
+        y_prev, x_prev = prev
+
+        min_y, max_y = min(y, y_prev), max(y, y_prev)
+        min_x, max_x = min(x, x_prev), max(x, x_prev)
+
+        color = None
+
+        if position in unique:
+            if prev not in backtracking:
+                color = solution_color
+        else:
+            color = backtracking_color
+
+        if color is not None:
+            image_array[min_y:max_y + 1, min_x:max_x + 1] = color
+
+        prev = position
+
+    return Im.fromarray(image_array)
 
 
 def enlarge_image(image):

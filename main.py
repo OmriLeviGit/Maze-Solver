@@ -54,10 +54,12 @@ def main():
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
-        output_path = os.path.join(output_folder, f"{image_name} - {chosen_algo}.jpg")
+        output_path = os.path.join(output_folder, f"{image_name.title()} - {chosen_algo.title()}.jpg")
 
         solved_maze.save(output_path, format="JPEG")
         print(f"Solution saved to {output_path}.")
+
+    solved_maze.show()
 
 
 if __name__ == '__main__':
