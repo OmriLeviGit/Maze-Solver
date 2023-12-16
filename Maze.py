@@ -61,7 +61,6 @@ class Maze:
                 if not ((top_neighbor or bottom_neighbor) and (right_neighbor or left_neighbor)):
                     continue
 
-
                 curr_node = Maze.Node((i, j))
                 node_above = top_dict.pop(j, None)
 
@@ -92,19 +91,19 @@ class Maze:
                 break
 
 
-    @property
-    def array(self):
-        return self._array
+@property
+def array(self):
+    return self._array
 
-    @property
-    def start(self):
-        return self._start
+@property
+def start(self):
+    return self._start
 
-    @property
-    def end(self):
-        return self._end
+@property
+def end(self):
+    return self._end
 
 
-    @property
-    def nodes(self):
-        return self._nodes
+@property
+def nodes(self):
+    return self._nodes
