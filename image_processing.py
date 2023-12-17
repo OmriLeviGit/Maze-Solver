@@ -1,32 +1,22 @@
-from maze_solver import enlarge_image
 from CONST import WHITE, BLACK, THRESHOLD
 
 from PIL import Image
 import numpy as np
 
+from utils import trim_white_borders
+
 
 def process_and_enhance_image(image):
-    thresholded_image = image.point(lambda pixel: BLACK if pixel < THRESHOLD else WHITE, "L")
+    thresholded_image = image.convert("L").point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK, "L")
     image_array = np.array(thresholded_image)
 
     # if there is only one white cell in the first row, it is a generated maze and not one from Google
     if np.sum(image_array[0] == WHITE) == 1:
         return image
 
-    # processed_array = clean_up_correction(apply_smoothing(clean_up_array_duplicates(image_array)))
-    array = clean_up_array_duplicates(image_array)
-    array = apply_smoothing(array)
-    array = clean_up_correction(array)
-    array = clean_up_array_duplicates(array)
+    processed_array = trim_white_borders(clean_up_correction(apply_smoothing(clean_up_array_duplicates(image_array))))
 
-    processed_array = array
-
-    new_image = Image.fromarray(processed_array).convert("RGB")
-
-    # return new_image
-    large = enlarge_image(new_image)
-    large.show()
-    large.save("output/test2.jpg", format="JPEG")
+    return Image.fromarray(processed_array)
 
 
 def clean_up_array_duplicates(array):
@@ -233,18 +223,3 @@ def clean_up_correction(array):
 
     return new_array
 
-
-def trim_white_borders(array):
-    if array.shape[0] > 1 and np.all(array[0] == WHITE):
-        array = array[1:, :]
-
-    if array.shape[0] > 1 and np.all(array[-1] == WHITE):
-        array = array[:-1, :]
-
-    if array.shape[1] > 1 and np.all(array[:, 0] == WHITE):
-        array = array[:, 1:]
-
-    if array.shape[1] > 1 and np.all(array[:, -1] == WHITE):
-        array = array[:, :-1]
-
-    return array

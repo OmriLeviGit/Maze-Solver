@@ -21,7 +21,7 @@ class Maze:
             return abs(y_n2 - y_n1) + abs(x_n2 - x_n1)  # Manhattan distance
 
     def __init__(self, image):
-        self._array = np.array(image.point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK), dtype=np.uint8)
+        self._array = np.array(image.convert("L").point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK))
         self._start = None
         self._end = None
         self._nodes = []
@@ -90,21 +90,21 @@ class Maze:
                 break
 
 
-@property
-def array(self):
-    return self._array
+    @property
+    def array(self):
+        return self._array
 
 
-@property
-def start(self):
-    return self._start
+    @property
+    def start(self):
+        return self._start
 
 
-@property
-def end(self):
-    return self._end
+    @property
+    def end(self):
+        return self._end
 
 
-@property
-def nodes(self):
-    return self._nodes
+    @property
+    def nodes(self):
+        return self._nodes
