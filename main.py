@@ -60,6 +60,5 @@ def main():
         solved_maze_img.close()
 
 
-
 if __name__ == '__main__':
     main()

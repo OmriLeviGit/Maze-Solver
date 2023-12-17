@@ -10,13 +10,13 @@ def process_and_enhance_image(image):
     thresholded_image = image.convert("L").point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK, "L")
     image_array = np.array(thresholded_image)
 
-    # if there is only one white cell in the first row, it is a generated maze and not one from Google
+    # if there is only one white cell in the first row, it is a generated maze and the image was not processed
     if np.sum(image_array[0] == WHITE) == 1:
-        return image
+        return image, False
 
     processed_array = trim_white_borders(clean_up_correction(apply_smoothing(clean_up_array_duplicates(image_array))))
 
-    return Image.fromarray(processed_array)
+    return Image.fromarray(processed_array), True
 
 
 def clean_up_array_duplicates(array):
@@ -222,4 +222,3 @@ def clean_up_correction(array):
     new_array = np.hstack((new_array, temp_array[:, -1][:, None]))     # Add last column
 
     return new_array
-

@@ -158,3 +158,46 @@ def trim_white_borders(array):
         array = array[:, :-1]
 
     return array
+
+
+def add_white_borders(image):
+    border_size = 1
+    array = np.array(image)
+
+    # Add top border
+    top_border = np.ones((border_size, array.shape[1], 3), dtype=array.dtype) * WHITE
+    array = np.vstack((top_border, array))
+
+    # Add bottom border
+    bottom_border = np.ones((border_size, array.shape[1], 3), dtype=array.dtype) * WHITE
+    array = np.vstack((array, bottom_border))
+
+    # Add left border
+    left_border = np.ones((array.shape[0], border_size, 3), dtype=array.dtype) * WHITE
+    array = np.hstack((left_border, array))
+
+    # Add right border
+    right_border = np.ones((array.shape[0], border_size, 3), dtype=array.dtype) * WHITE
+    array = np.hstack((array, right_border))
+
+    return Image.fromarray(array)
+
+
+def extract_solved_image(processed_image, path, algo, is_processed):
+    """
+    Extracts the solved maze image.
+
+    Parameters:
+    - processed_image: The processed maze image.
+    - path: The solution path through the maze.
+    - algo: The maze-solving algorithm used.
+    - is_processed: A flag indicating whether the image is already processed.
+
+    Returns:
+    - Image: The enlarged and processed solved maze image.
+    """
+    solution_image = draw(processed_image, path, algo)
+    processed_solution_image = add_white_borders(solution_image) if is_processed else solution_image
+    enlarged_solution_image = enlarge_image(processed_solution_image)
+
+    return enlarged_solution_image
