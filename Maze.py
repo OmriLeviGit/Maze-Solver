@@ -1,4 +1,5 @@
 import numpy as np
+from CONST import WHITE, BLACK, THRESHOLD
 
 
 class Maze:
@@ -19,9 +20,8 @@ class Maze:
 
             return abs(y_n2 - y_n1) + abs(x_n2 - x_n1)  # Manhattan distance
 
-
     def __init__(self, image):
-        self._array = np.array(image.point(lambda pixel: 255 if pixel > 127 else 0), dtype=np.uint8)
+        self._array = np.array(image.point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK), dtype=np.uint8)
         self._start = None
         self._end = None
         self._nodes = []
@@ -52,10 +52,10 @@ class Maze:
                     node_left = None
                     continue
 
-                top_neighbor = self._array[i - 1][j] != 0
-                bottom_neighbor = self._array[i + 1][j] != 0
-                right_neighbor = self._array[i][j + 1] != 0
-                left_neighbor = self._array[i][j - 1] != 0
+                top_neighbor = self._array[i - 1][j] != BLACK
+                bottom_neighbor = self._array[i + 1][j] != BLACK
+                right_neighbor = self._array[i][j + 1] != BLACK
+                left_neighbor = self._array[i][j - 1] != BLACK
 
                 # if cell is not a junction, continue
                 if not ((top_neighbor or bottom_neighbor) and (right_neighbor or left_neighbor)):
@@ -78,7 +78,6 @@ class Maze:
                 node_left = curr_node
                 self._nodes.append(curr_node)
 
-
         # Process the last row
         for i in range(columns):
             if self._array[rows - 1][i]:
@@ -95,9 +94,11 @@ class Maze:
 def array(self):
     return self._array
 
+
 @property
 def start(self):
     return self._start
+
 
 @property
 def end(self):

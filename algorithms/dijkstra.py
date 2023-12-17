@@ -1,15 +1,9 @@
 import numpy as np
 from Heap import Heap
-from enum import Enum
+from CONST import FOUND, VISITED
 
 
 # Dijkstra
-
-class State(Enum):
-    NOT_FOUND = 0
-    FOUND = 1
-    VISITED = 2
-
 
 def solve(maze):
     apply_dijkstra(maze)
@@ -32,17 +26,17 @@ def solve(maze):
 
         curr = heap.pop()
 
-        while visited[curr.coordinates] == State.VISITED.value:
+        while visited[curr.coordinates] == VISITED:
             curr = heap.pop()
 
-        visited[curr.coordinates] = State.VISITED.value
+        visited[curr.coordinates] = VISITED
 
         if curr.coordinates == end.coordinates:
             is_completed = True
             break
 
         for n in curr.neighbors:
-            if n is None or visited[n.coordinates] == State.VISITED.value:
+            if n is None or visited[n.coordinates] == VISITED:
                 continue
 
             # distance from start to neighbor through current node
@@ -56,12 +50,12 @@ def solve(maze):
             parent_dict[n] = curr
 
             # if neighbor was found before, remove it from the heap and push again to reorder the heap
-            if visited[n.coordinates] == State.FOUND.value:
+            if visited[n.coordinates] == FOUND:
                 heap.remove_push(n)
                 continue
 
             # mark neighbor as found and push it to the heap
-            visited[n.coordinates] = State.FOUND.value
+            visited[n.coordinates] = FOUND
             heap.push(n)
 
     path = []

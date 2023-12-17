@@ -7,11 +7,12 @@ from maze_solver import maze_solver, CannotCompleteMazeError
 from image_conversion import process_and_enhance_image
 
 # todo remove comment return from image_conversion
+# todo fix parallel issue in conversion
+# todo remove and add white lines
 
 
 def solve_maze(image_path, chosen_algo):
     image = None
-
     try:
         image = Im.open(image_path).convert("L")
         processed_image = process_and_enhance_image(image)

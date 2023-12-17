@@ -1,0 +1,10 @@
+
+# Colors
+BLACK = 0
+WHITE = 255
+THRESHOLD = 127
+
+# State
+FOUND = 1
+VISITED = 2
+

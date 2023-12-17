@@ -1,22 +1,23 @@
 from maze_solver import enlarge_image
+from CONST import WHITE, BLACK, THRESHOLD
 
 from PIL import Image
 import numpy as np
 
 
 def process_and_enhance_image(image):
-    threshold = 127
-    thresholded_image = image.point(lambda pixel: 0 if pixel < threshold else 255, "L")
+    thresholded_image = image.point(lambda pixel: BLACK if pixel < THRESHOLD else WHITE, "L")
     image_array = np.array(thresholded_image)
 
     # if there is only one white cell in the first row, it is a generated maze and not one from Google
-    if np.sum(image_array[0] == 255) == 1:
+    if np.sum(image_array[0] == WHITE) == 1:
         return image
 
     # processed_array = clean_up_correction(apply_smoothing(clean_up_array_duplicates(image_array)))
     array = clean_up_array_duplicates(image_array)
     array = apply_smoothing(array)
     array = clean_up_correction(array)
+    array = clean_up_array_duplicates(array)
 
     processed_array = array
 
@@ -102,16 +103,15 @@ def apply_smoothing(array):
         An invalid pixel is defined as a black pixel surrounded by 3 white pixels, creating a 2x2 square,
         but cannot create a 3x3 isosceles triangle where the pixel itself is in the middle of the base.
         """
-        white = 255
 
-        top_left = new_array[y_val - 1][x_val - 1] == white
-        top = new_array[y_val - 1][x_val] == white
-        top_right = new_array[y_val - 1][x_val + 1] == white
-        right = new_array[y_val][x_val + 1] == white
-        bot_right = new_array[y_val + 1][x_val + 1] == white
-        bot = new_array[y_val + 1][x_val] == white
-        bot_left = new_array[y_val + 1][x_val - 1] == white
-        left = new_array[y_val][x_val - 1] == white
+        top_left = new_array[y_val - 1][x_val - 1] == WHITE
+        top = new_array[y_val - 1][x_val] == WHITE
+        top_right = new_array[y_val - 1][x_val + 1] == WHITE
+        right = new_array[y_val][x_val + 1] == WHITE
+        bot_right = new_array[y_val + 1][x_val + 1] == WHITE
+        bot = new_array[y_val + 1][x_val] == WHITE
+        bot_left = new_array[y_val + 1][x_val - 1] == WHITE
+        left = new_array[y_val][x_val - 1] == WHITE
 
         if top and top_right and right and (not top_left or not bot_right):
             return False
@@ -141,7 +141,7 @@ def apply_smoothing(array):
                     if pixel_is_valid(i, j):
                         break
 
-                    new_array[i][j] = 255
+                    new_array[i][j] = WHITE
                     j -= 1      # move back to the previous column
                     changes_made = True
 
@@ -157,7 +157,7 @@ def apply_smoothing(array):
                     if pixel_is_valid(i, j):
                         break
 
-                    new_array[i][j] = 255
+                    new_array[i][j] = WHITE
                     i -= 1      # move back to the previous row
                     backward_steps += 1
                     changes_made = True
@@ -185,7 +185,7 @@ def clean_up_correction(array):
     num_rows, num_cols = array.shape
     temp_array = np.array([array[0]])
 
-    step_back = 0  # Tracks the number of rows to skip when comparing rows for copying into the new array
+    backward_steps = 0  # Tracks the number of rows to skip when comparing rows for copying into the new array
 
     # Check for alternating black and white patterns in adjacent rows
     for i in range(num_rows - 2):
@@ -193,7 +193,7 @@ def clean_up_correction(array):
 
         for j in range(num_cols):
             # If alternating pattern found, add the current row to the temp array
-            last_added = temp_array[i - step_back][j]
+            last_added = temp_array[i - backward_steps][j]
             alternating_pattern = last_added == array[i + 2][j] != array[i + 1][j]
 
             if alternating_pattern:
@@ -202,7 +202,7 @@ def clean_up_correction(array):
                 break
 
         if not row_is_added:
-            step_back += 1
+            backward_steps += 1
 
     temp_array = np.vstack((temp_array, array[-1]))     # Add last row
 
@@ -211,14 +211,14 @@ def clean_up_correction(array):
     new_array = np.array([temp_array[:, 0]])
     new_array = new_array.T
 
-    step_back = 0  # Tracks the number of rows to skip when comparing rows for copying into the new array
+    backward_steps = 0  # Tracks the number of rows to skip when comparing rows for copying into the new array
 
     # Check for alternating black and white patterns in adjacent columns
     for i in range(num_cols - 2):
         col_is_added = False
         for j in range(num_rows):
             # If alternating pattern found, add the current column to the new array
-            last_added = new_array[j][i - step_back]
+            last_added = new_array[j][i - backward_steps]
             alternating_pattern = last_added == temp_array[j][i + 2] != temp_array[j][i + 1]
 
             if alternating_pattern:
@@ -227,8 +227,24 @@ def clean_up_correction(array):
                 break
 
         if not col_is_added:
-            step_back += 1
+            backward_steps += 1
 
     new_array = np.hstack((new_array, temp_array[:, -1][:, None]))     # Add last column
 
     return new_array
+
+
+def trim_white_borders(array):
+    if array.shape[0] > 1 and np.all(array[0] == WHITE):
+        array = array[1:, :]
+
+    if array.shape[0] > 1 and np.all(array[-1] == WHITE):
+        array = array[:-1, :]
+
+    if array.shape[1] > 1 and np.all(array[:, 0] == WHITE):
+        array = array[:, 1:]
+
+    if array.shape[1] > 1 and np.all(array[:, -1] == WHITE):
+        array = array[:, :-1]
+
+    return array
