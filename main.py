@@ -3,8 +3,10 @@ import sys
 
 from PIL import Image as Im
 
-from maze_solver import maze_solver, CannotCompleteError
+from maze_solver import maze_solver, CannotCompleteMazeError
+from image_conversion import process_and_enhance_image
 
+# todo remove comment return from image_conversion
 
 
 def solve_maze(image_path, chosen_algo):
@@ -12,10 +14,12 @@ def solve_maze(image_path, chosen_algo):
 
     try:
         image = Im.open(image_path).convert("L")
-        return maze_solver(image, chosen_algo)
+        processed_image = process_and_enhance_image(image)
+
+        return maze_solver(processed_image, chosen_algo)
     except FileNotFoundError:
         print(f"Error: The file {image_path} was not found.")
-    except CannotCompleteError as e:
+    except CannotCompleteMazeError as e:
         print(f"Error: The maze could not be completed using the \"{e.args[0]}\" algorithm.")
         print(f"Path: {e.args[1]}")
     except Exception as e:

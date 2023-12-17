@@ -4,30 +4,41 @@ from PIL import Image
 import numpy as np
 
 
-def process_image(image):
-    image = Image.open("img/maze2jpg").convert("L")
+def process_and_enhance_image(image):
     threshold = 127
-    image = image.point(lambda pixel: 0 if pixel < threshold else 255, "L")
+    thresholded_image = image.point(lambda pixel: 0 if pixel < threshold else 255, "L")
+    image_array = np.array(thresholded_image)
 
-    array = np.array(image)
-    array = remove_duplicate_rows_and_columns(array)  # speed up the smoothing function
+    # if there is only one white cell in the first row, it is a generated maze and not one from Google
+    if np.sum(image_array[0] == 255) == 1:
+        return image
 
-    smooth(array)
-    array = trio_scan(array)
+    # processed_array = clean_up_correction(apply_smoothing(clean_up_array_duplicates(image_array)))
+    array = clean_up_array_duplicates(image_array)
+    array = apply_smoothing(array)
+    array = clean_up_correction(array)
 
-    array = remove_duplicate_rows_and_columns(array)  # smoothing may create duplicates
+    processed_array = array
 
-    new_image = Image.fromarray(array).convert("RGB")
+    new_image = Image.fromarray(processed_array).convert("RGB")
+
+    # return new_image
     large = enlarge_image(new_image)
     large.show()
     large.save("output/test2.jpg", format="JPEG")
 
 
-if __name__ == '__main__':
-    process_image()
+def clean_up_array_duplicates(array):
+    """
+    Remove duplicate rows and columns from a 2D NumPy array.
 
+    Parameters:
+    - array (numpy.ndarray): The input 2D array.
 
-def remove_duplicate_rows_and_columns(array):
+    Returns:
+    - numpy.ndarray: The array with duplicate rows and columns removed.
+    """
+
     # Clean up rows
     prev_row = 0
     temp_array = np.empty((0, array.shape[1]))  # Initialize as an empty array with the original number of columns
@@ -65,18 +76,42 @@ def remove_duplicate_rows_and_columns(array):
 
     return no_duplicates
 
-def smooth(array):
-    def pixel_is_valid(array, num_rows, num_cols):
+
+def apply_smoothing(array):
+    """
+    Apply a smoothing operation to a 2D NumPy array.
+
+    The function iteratively performs a smoothing operation on the input array until no more changes are made.
+    Smoothing is applied to eliminate black pixels that are sticking out by checking their surrounding pixels.
+
+    The smoothing operation is performed in both rows and columns.
+
+    Parameters:
+    - array (numpy.ndarray): The input 2D array representing an image.
+
+    Returns:
+    - numpy.ndarray: The smoothed array with black pixels eliminated
+     """
+
+    new_array = array.copy()
+
+    def pixel_is_valid(y_val, x_val):
+        """
+        Checks if a black pixel is invalid, and needs to be smoothed out.
+
+        An invalid pixel is defined as a black pixel surrounded by 3 white pixels, creating a 2x2 square,
+        but cannot create a 3x3 isosceles triangle where the pixel itself is in the middle of the base.
+        """
         white = 255
 
-        top_left = array[num_rows - 1][num_cols - 1] == white
-        top = array[num_rows - 1][num_cols] == white
-        top_right = array[num_rows - 1][num_cols + 1] == white
-        right = array[num_rows][num_cols + 1] == white
-        bot_right = array[num_rows + 1][num_cols + 1] == white
-        bot = array[num_rows + 1][num_cols] == white
-        bot_left = array[num_rows + 1][num_cols - 1] == white
-        left = array[num_rows][num_cols - 1] == white
+        top_left = new_array[y_val - 1][x_val - 1] == white
+        top = new_array[y_val - 1][x_val] == white
+        top_right = new_array[y_val - 1][x_val + 1] == white
+        right = new_array[y_val][x_val + 1] == white
+        bot_right = new_array[y_val + 1][x_val + 1] == white
+        bot = new_array[y_val + 1][x_val] == white
+        bot_left = new_array[y_val + 1][x_val - 1] == white
+        left = new_array[y_val][x_val - 1] == white
 
         if top and top_right and right and (not top_left or not bot_right):
             return False
@@ -92,7 +127,7 @@ def smooth(array):
 
         return True
 
-    num_rows, num_cols = array.shape
+    num_rows, num_cols = new_array.shape
     changes_made = True
 
     # Smooth until no change is made, since vertical smoothing may interfere with horizontal smoothing and vice versa
@@ -102,11 +137,11 @@ def smooth(array):
         # Process rows
         for i in range(1, num_rows - 1):
             for j in range(1, num_cols - 1):
-                while array[i][j] == 0:
-                    if pixel_is_valid(array, i, j):
+                while new_array[i][j] == 0:
+                    if pixel_is_valid(i, j):
                         break
 
-                    array[i][j] = 255
+                    new_array[i][j] = 255
                     j -= 1      # move back to the previous column
                     changes_made = True
 
@@ -118,11 +153,11 @@ def smooth(array):
             backward_steps = 0  # track backward steps
 
             while i < num_rows - 1:
-                while array[i][j] == 0:
-                    if pixel_is_valid(array, i, j):
+                while new_array[i][j] == 0:
+                    if pixel_is_valid(i, j):
                         break
 
-                    array[i][j] = 255
+                    new_array[i][j] = 255
                     i -= 1      # move back to the previous row
                     backward_steps += 1
                     changes_made = True
@@ -130,10 +165,22 @@ def smooth(array):
                 i += 1 + backward_steps     # move to the next row
                 backward_steps = 0          # reset backward steps
 
+    return new_array
 
 
+def clean_up_correction(array):
+    """
+    Perform correction after smoothing and duplicate removal to avoid shifting walls in the maze.
 
-def trio_scan(array):
+    The process involves scanning rows and columns, checking for alternating black and white patterns,
+    and reconstructing a corrected array to mitigate potential shifts caused by smoothing and removal of duplicates.
+
+    Parameters:
+    - array (numpy.ndarray): The 2D array representing the maze.
+
+    Returns:
+    - numpy.ndarray: The corrected array after the cleanup process.
+    """
     # Scan Rows
     num_rows, num_cols = array.shape
     temp_array = np.array([array[0]])
@@ -146,8 +193,10 @@ def trio_scan(array):
 
         for j in range(num_cols):
             # If alternating pattern found, add the current row to the temp array
-            curr_row = temp_array[i - step_back][j]
-            if curr_row == array[i + 2][j] and curr_row != array[i + 1][j]:
+            last_added = temp_array[i - step_back][j]
+            alternating_pattern = last_added == array[i + 2][j] != array[i + 1][j]
+
+            if alternating_pattern:
                 temp_array = np.vstack((temp_array, array[i + 1, :]))
                 row_is_added = True
                 break
@@ -158,7 +207,6 @@ def trio_scan(array):
     temp_array = np.vstack((temp_array, array[-1]))     # Add last row
 
     # Scan Columns
-    temp_array = temp_array
     num_rows, num_cols = temp_array.shape
     new_array = np.array([temp_array[:, 0]])
     new_array = new_array.T
@@ -168,11 +216,12 @@ def trio_scan(array):
     # Check for alternating black and white patterns in adjacent columns
     for i in range(num_cols - 2):
         col_is_added = False
-
         for j in range(num_rows):
             # If alternating pattern found, add the current column to the new array
-            curr_row = new_array[j][i - step_back]
-            if curr_row == temp_array[j][i + 2] and curr_row != temp_array[j][i + 1]:
+            last_added = new_array[j][i - step_back]
+            alternating_pattern = last_added == temp_array[j][i + 2] != temp_array[j][i + 1]
+
+            if alternating_pattern:
                 new_array = np.hstack((new_array, temp_array[:, i + 1][:, None]))
                 col_is_added = True
                 break
