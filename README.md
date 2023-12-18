@@ -32,11 +32,10 @@ However, note that while it might work, some of the algorithms may resort to an 
 ## How It Works
 The program follows these key steps:
 
-1. **Maze Initializing Phase:** The program scans the BMP file from the top-left to the bottom-right, identifying junctions and entrances.
-
-2. **Solving Phase:** For node-based algorithms, junctions serve as nodes, and the chosen algorithm is executed. For the LHT algorithm, the program iterates through each step, regardless of junctions, until it reaches the end.
-
-3. **Drawing Phase:** The program takes the traversed path from the start to the end, applies coloring, and enlarges the image if necessary for a clearer visualization.
+1. **Preprocessing (if from the internet)**: If the input image is from the internet, the program applies a custom smoothing filter and performs cropping before proceeding to the maze initialization phase.
+2. **Maze Initializing Phase:** The program scans the image from the top-left to the bottom-right, identifying junctions and entrances.
+3. **Solving Phase:** For node-based algorithms, junctions serve as nodes, and the chosen algorithm is executed. For the LHT algorithm, the program iterates through each step, regardless of junctions, until it reaches the end.
+4. **Drawing Phase:** The program takes the traversed path from the start to the end, applies coloring, and enlarges the image if necessary for a clearer visualization.
 
 The duration of each step is measured individually, and the corresponding timings are displayed at the conclusion of the process.
 
@@ -45,3 +44,11 @@ In addition, the image of the solved maze will be saved to a generated 'output' 
 
 ### [Examples](https://github.com/OmriLeviGit/Maze-Solver/tree/main/examples)
 Each example offers a visual representation of the software's capabilities, showcasing how it navigates through mazes using various algorithms.
+The algorithm determines the selected colors.
+
+
+
+
+
+
+
