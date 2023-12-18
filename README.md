@@ -26,8 +26,8 @@ The program is designed to operate under the following assumptions:
 
 The tool is capable of solving mazes of [any rectangular shape](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Uneven%20Maze%20-%20Dfs.jpg), and is not limited to squares.
 
-Additionally, it has the added functionality of processing and solving mazes from [images found on the internet](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Maze2%20From%20The%20Internet%20-%20Dijkstra.jpg), and not just those generated using Daedalus.
-However, note that while it might work, some of the algorithms may resort to an inefficient 'flood-fill' approach, as shown in this [example](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Maze1%20From%20The%20Internet%20-%20Dfs.jpg).
+Additionally, it has the added functionality of processing and solving mazes from [images found on the internet](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Maze1%20From%20The%20Internet%20-%20Dijkstra.jpg), and not just those generated using Daedalus.
+However, note that while it might work, some of the algorithms may resort to an inefficient 'flood-fill' approach, as shown in this [example](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Maze2%20From%20The%20Internet%20-%20Dfs.jpg).
 
 ## How It Works
 The program follows these key steps:
