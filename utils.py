@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 
-from CONST import WHITE
+from CONST import WHITE, BLACK
 
 
 def find_backtracking(path):
@@ -29,7 +29,7 @@ def find_backtracking(path):
     backtracking = []
 
     for i, position in enumerate(path):
-        # start index of sub-lists of duplicates, where everything between the start and the end is a backtracked path
+        # Start index of sub-lists of duplicates, where everything between the start and the end is a backtracked path
         sublist_start = None
         sublist_end = None
 
@@ -37,7 +37,7 @@ def find_backtracking(path):
             unique.remove(position)
             backtracking.append(position)
         else:
-            # move the first position in each backtracking sub-list to unique because it's a part of the main path
+            # Move the first position in each backtracking sub-list to unique because it's a part of the main path
             if path[i - 1] in backtracking:
                 sublist_start = path.index(path[i - 1]) + 1
                 sublist_end = i - 1
@@ -46,7 +46,7 @@ def find_backtracking(path):
                 unique.append(path[i - 1])
             unique.append(position)
 
-        # if sublist detected, every position inside it is defined as a backtracked cell
+        # If sublist detected, every position inside it is defined as a backtracked cell
         if sublist_start is not None:
             for j in range(sublist_start, sublist_end):
                 curr = path[j]
@@ -59,8 +59,8 @@ def find_backtracking(path):
 
 def draw(image, path, algo):
     def calculate_color(step, length):
-        primary_color = [0, 255, 0]  # default
-        secondary_color = [0, 64, 0]  # default
+        primary_color = [0, 255, 0]     # Default
+        secondary_color = [0, 64, 0]    # Default
 
         if algo == "breadth first search" or algo == "bfs":
             scaler = int((step / length) * 50)
@@ -71,7 +71,7 @@ def draw(image, path, algo):
         elif algo == "left hand turn" or algo == "lht":
             scaler = int((step / length) * 50)
             primary_color = [255 - scaler, 102 - scaler * 2, 178 - scaler * 3.5]
-            secondary_color = [c / 1.7 for c in primary_color]  # dimmer version of the solution color
+            secondary_color = [c / 1.7 for c in primary_color]  # Dimmer version of the solution color
         elif algo == "dijkstra":
             scaler = int((step / length) * 100)
             primary_color = [0, 200 - scaler, 200 - scaler]
@@ -144,25 +144,16 @@ def enlarge_image(image):
     return enlarged_image
 
 
-def trim_white_borders(array):
-    if array.shape[0] > 1 and np.all(array[0] == WHITE):
-        array = array[1:, :]
-
-    if array.shape[0] > 1 and np.all(array[-1] == WHITE):
-        array = array[:-1, :]
-
-    if array.shape[1] > 1 and np.all(array[:, 0] == WHITE):
-        array = array[:, 1:]
-
-    if array.shape[1] > 1 and np.all(array[:, -1] == WHITE):
-        array = array[:, :-1]
-
-    return array
-
-
 def add_white_borders(image):
-    border_size = 1
     array = np.array(image)
+    border_size = 0
+
+    # Set the border size as twice the wall's thickness
+    for i in range(array.shape[0]):
+        if np.all(array[i, i] == WHITE):
+            border_size = i * 2
+            break
+
 
     # Add top border
     top_border = np.ones((border_size, array.shape[1], 3), dtype=array.dtype) * WHITE

@@ -3,69 +3,20 @@ from CONST import WHITE, BLACK, THRESHOLD
 from PIL import Image
 import numpy as np
 
-from utils import trim_white_borders
-
 
 def process_and_enhance_image(image):
     thresholded_image = image.convert("L").point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK, "L")
     image_array = np.array(thresholded_image)
+    is_processed = True
 
     # if there is only one white cell in the first row, it is a generated maze and the image was not processed
     if np.sum(image_array[0] == WHITE) == 1:
-        return image, False
+        return thresholded_image, not is_processed
 
-    processed_array = trim_white_borders(clean_up_correction(apply_smoothing(clean_up_array_duplicates(image_array))))
+    smoothed_array = apply_smoothing(image_array)
+    cropped_array = crop_maze(smoothed_array)
 
-    return Image.fromarray(processed_array), True
-
-
-def clean_up_array_duplicates(array):
-    """
-    Remove duplicate rows and columns from a 2D NumPy array.
-
-    Parameters:
-    - array (numpy.ndarray): The input 2D array.
-
-    Returns:
-    - numpy.ndarray: The array with duplicate rows and columns removed.
-    """
-
-    # Clean up rows
-    prev_row = 0
-    temp_array = np.empty((0, array.shape[1]))  # Initialize as an empty array with the original number of columns
-
-    # Iterate through rows
-    for i in range(1, array.shape[0]):
-
-        # Check if the previous row is equal to the next row
-        if not np.array_equal(array[prev_row], array[i]):
-            # If not equal, add the previous row to the new array
-            temp_array = np.vstack((temp_array, array[prev_row]))
-            prev_row = i  # Update the previous row index
-
-    # Add the last row to the new array
-    temp_array = np.vstack((temp_array, array[prev_row]))
-
-    # Clean up columns on the new array
-    prev_col = 0
-    no_duplicates = np.empty((temp_array.shape[0], 0))  # Initialize as an empty array with the new number of rows
-
-    # Add the first column to the new array
-    no_duplicates = np.hstack((no_duplicates, temp_array[:, prev_col][:, None]))
-
-    # Iterate through columns
-    for i in range(1, temp_array.shape[1]):
-
-        # Check if the previous column is equal to the next column
-        if not np.array_equal(temp_array[:, prev_col], temp_array[:, i]):
-            # If not equal, add the previous column to the new array
-            no_duplicates = np.hstack((no_duplicates, temp_array[:, i][:, None]))
-            prev_col = i  # Update the previous column index
-
-    # Reshape to 2D
-    no_duplicates = no_duplicates.reshape((temp_array.shape[0], -1))
-
-    return no_duplicates
+    return Image.fromarray(cropped_array), is_processed
 
 
 def apply_smoothing(array):
@@ -158,67 +109,73 @@ def apply_smoothing(array):
     return new_array
 
 
-def clean_up_correction(array):
-    """
-    Perform correction after smoothing and duplicate removal to avoid shifting walls in the maze.
+def crop_maze(array):
+    top = 0
+    while np.all(array[top] == WHITE):
+        top += 1
 
-    The process involves scanning rows and columns, checking for alternating black and white patterns,
-    and reconstructing a corrected array to mitigate potential shifts caused by smoothing and removal of duplicates.
+    right = array.shape[1] - 1
+    while np.all(array[:, right] == WHITE):
+        right -= 1
 
-    Parameters:
-    - array (numpy.ndarray): The 2D array representing the maze.
+    bot = array.shape[0] - 1
+    while np.all(array[bot] == WHITE):
+        bot -= 1
 
-    Returns:
-    - numpy.ndarray: The corrected array after the cleanup process.
-    """
-    # Scan Rows
-    num_rows, num_cols = array.shape
-    temp_array = np.array([array[0]])
+    left = 0
+    while np.all(array[:, left] == WHITE):
+        left += 1
 
-    backward_steps = 0  # Tracks the number of rows to skip when comparing rows for copying into the new array
+    # Uneven top row
+    while True:
+        color_change_count = 0
+        for i in range(left, right - 1):
+            if (array[top, i] == WHITE and array[top, i + 1] == BLACK
+                    or array[top, i] == BLACK and array[top, i + 1] == WHITE):
+                color_change_count += 1
 
-    # Check for alternating black and white patterns in adjacent rows
-    for i in range(num_rows - 2):
-        row_is_added = False
+        if color_change_count == 1:
+            top += 1
+        else:
+            break
 
-        for j in range(num_cols):
-            # If alternating pattern found, add the current row to the temp array
-            last_added = temp_array[i - backward_steps][j]
-            alternating_pattern = last_added == array[i + 2][j] != array[i + 1][j]
+    # Uneven right col
+    while True:
+        color_change_count = 0
+        for i in range(top, bot - 1):
+            if (array[i, right] == WHITE and array[i + 1, right] == BLACK
+                    or array[i, right] == BLACK and array[i + 1, right] == WHITE):
+                color_change_count += 1
 
-            if alternating_pattern:
-                temp_array = np.vstack((temp_array, array[i + 1, :]))
-                row_is_added = True
-                break
+        if color_change_count == 1:
+            right -= 1
+        else:
+            break
 
-        if not row_is_added:
-            backward_steps += 1
+    # Uneven bot row
+    while True:
+        color_change_count = 0
+        for i in range(left, right - 1):
+            if (array[bot, i] == WHITE and array[bot, i + 1] == BLACK
+                    or array[bot, i] == BLACK and array[bot, i + 1] == WHITE):
+                color_change_count += 1
 
-    temp_array = np.vstack((temp_array, array[-1]))     # Add last row
+        if color_change_count == 1:
+            bot -= 1
+        else:
+            break
 
-    # Scan Columns
-    num_rows, num_cols = temp_array.shape
-    new_array = np.array([temp_array[:, 0]])
-    new_array = new_array.T
+    # Uneven left col
+    while True:
+        color_change_count = 0
+        for i in range(top, bot - 1):
+            if (array[i, left] == WHITE and array[i + 1, left] == BLACK
+                    or array[i, left] == BLACK and array[i + 1, left] == WHITE):
+                color_change_count += 1
 
-    backward_steps = 0  # Tracks the number of rows to skip when comparing rows for copying into the new array
+        if color_change_count == 1:
+            left += 1
+        else:
+            break
 
-    # Check for alternating black and white patterns in adjacent columns
-    for i in range(num_cols - 2):
-        col_is_added = False
-        for j in range(num_rows):
-            # If alternating pattern found, add the current column to the new array
-            last_added = new_array[j][i - backward_steps]
-            alternating_pattern = last_added == temp_array[j][i + 2] != temp_array[j][i + 1]
-
-            if alternating_pattern:
-                new_array = np.hstack((new_array, temp_array[:, i + 1][:, None]))
-                col_is_added = True
-                break
-
-        if not col_is_added:
-            backward_steps += 1
-
-    new_array = np.hstack((new_array, temp_array[:, -1][:, None]))     # Add last column
-
-    return new_array
+    return array[top:bot, left:right]

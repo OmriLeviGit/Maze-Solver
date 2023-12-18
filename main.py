@@ -4,6 +4,8 @@ import sys
 from PIL import Image as Im
 
 from maze_solver import maze_solver, CannotCompleteMazeError
+# todo add readme
+# todo remove show() from maze_solver and add back to main
 
 
 def solve_maze(image_path, chosen_algo):

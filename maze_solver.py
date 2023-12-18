@@ -3,7 +3,7 @@ import time
 from Maze import Maze
 from factory import create_solver
 from image_processing import process_and_enhance_image
-from utils import extract_solved_image
+from utils import extract_solved_image, enlarge_image
 
 
 class CannotCompleteMazeError(Exception):

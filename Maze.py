@@ -1,5 +1,5 @@
 import numpy as np
-from CONST import WHITE, BLACK, THRESHOLD
+from CONST import BLACK
 
 
 class Maze:
@@ -21,7 +21,7 @@ class Maze:
             return abs(y_n2 - y_n1) + abs(x_n2 - x_n1)  # Manhattan distance
 
     def __init__(self, image):
-        self._array = np.array(image.convert("L").point(lambda pixel: WHITE if pixel > THRESHOLD else BLACK))
+        self._array = np.array(image)
         self._start = None
         self._end = None
         self._nodes = []

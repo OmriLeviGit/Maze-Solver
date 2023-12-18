@@ -5,20 +5,27 @@ def solve(maze):
 
     y_start, x_start = maze.start.coordinates
     start_direction = ''
-    if y_start == 0:                    # starting at the top, heading down
+    if y_start == 0:                    # Starting at the top, heading down
         start_direction = 'S'
-    if x_start == 0:                    # starting at the left, heading right
+    if x_start == 0:                    # Starting at the left, heading right
         start_direction = 'E'
-    if y_start == maze.array.shape[0]:  # starting at the bottom, heading up
+    if y_start == maze.array.shape[0]:  # Starting at the bottom, heading up
         start_direction = 'N'
-    if x_start == maze.array.shape[1]:  # starting at the right, heading left
+    if x_start == maze.array.shape[1]:  # Starting at the right, heading left
         start_direction = 'W'
 
     facing = start_direction
     position = maze.start.coordinates
     path = [position]
+    times_visited_start = 0
 
     while not is_completed:
+        if position == maze.start.coordinates:  # Looping to the start means the maze cannot be completed
+            times_visited_start += 1
+
+            if times_visited_start > 1:
+                break
+
         if left_is_clear(facing, position, maze.array):
             facing = turn_left(facing)
         if front_is_clear(facing, position, maze.array):
