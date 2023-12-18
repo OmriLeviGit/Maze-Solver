@@ -15,7 +15,6 @@ def process_and_enhance_image(image):
 
     smoothed_array = apply_smoothing(image_array)
     cropped_array = crop_maze(smoothed_array)
-
     return Image.fromarray(cropped_array), is_processed
 
 
@@ -178,4 +177,4 @@ def crop_maze(array):
         else:
             break
 
-    return array[top:bot, left:right]
+    return array[top:bot + 1, left:right + 1]
