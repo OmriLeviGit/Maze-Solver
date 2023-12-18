@@ -34,6 +34,5 @@ class JunctionDetection(unittest.TestCase):
         np.testing.assert_array_equal(array, expected)
 
 
-
 if __name__ == '__main__':
     unittest.main()

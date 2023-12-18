@@ -24,7 +24,7 @@ class HeapFunctionality(unittest.TestCase):
         self.assertTrue(self.heap.is_empty())
 
     def test_update_distance_no_order_change(self):
-        Maze.Node.__lt__ = lambda self, other: self.value < other.value
+        Maze.Node.__lt__ = lambda one, other: one.value < other.value
 
         node1 = Maze.Node((0, 1))
         node2 = Maze.Node((2, 3))
@@ -48,7 +48,7 @@ class HeapFunctionality(unittest.TestCase):
         self.assertEqual(12, n_node2.value)
 
     def test_update_distance_order_change(self):
-        Maze.Node.__lt__ = lambda self, other: self.value < other.value
+        Maze.Node.__lt__ = lambda one, other: one.value < other.value
 
         node1 = Maze.Node((0, 1))
         node2 = Maze.Node((2, 3))

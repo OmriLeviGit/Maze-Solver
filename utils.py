@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 
-from CONST import WHITE, BLACK
+from CONST import WHITE
 
 
 def find_backtracking(path):
