@@ -36,8 +36,8 @@ class HeapFunctionality(unittest.TestCase):
 
         node1.value = 9
         node2.value = 12
-        self.heap.remove_push(node1)
-        self.heap.remove_push(node2)
+        self.heap.remove_and_heapify(node1)
+        self.heap.remove_and_heapify(node2)
 
         n_node1 = self.heap.pop()
         n_node2 = self.heap.pop()
@@ -60,8 +60,8 @@ class HeapFunctionality(unittest.TestCase):
 
         node1.value = 12
         node2.value = 9
-        self.heap.remove_push(node1)
-        self.heap.remove_push(node2)
+        self.heap.remove_and_heapify(node1)
+        self.heap.remove_and_heapify(node2)
 
         n_node1 = self.heap.pop()
         n_node2 = self.heap.pop()

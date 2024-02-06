@@ -18,7 +18,7 @@ def solve(maze):
 
     # create a boolean array 'visited' to keep track of visited locations in the maze
     visited = np.zeros(maze.array.shape, dtype=np.uint8)
-    start.distance = 0
+    start.cost = 0
 
     while True:
         if heap.is_empty():
@@ -40,20 +40,18 @@ def solve(maze):
                 continue
 
             # distance from start to neighbor through current node
-            distance_from_start = curr.distance + n.distance_to(curr)
+            distance_from_start = curr.cost + n.distance_to(curr)
 
-            if n.distance <= distance_from_start:   # if the old distance is smaller, so is the total cost
+            if n.cost <= distance_from_start:   # if the old distance is smaller, so is the total cost
                 continue
 
             # if the new distance is shorter, update the distance, cost and parent of neighbor.
-            n.distance = distance_from_start
-            n.total_cost = distance_from_start + n.heuristic
+            n.cost = distance_from_start + n.heuristic
             parent_dict[n] = curr
 
             # if neighbor was found before, remove it from the heap and push again to reorder the heap
             if visited[n.coordinates] == FOUND:
-                heap.remove_push(n)
-                continue
+                heap.remove_and_heapify(n)
 
             # mark neighbor as found and push it to the heap
             visited[n.coordinates] = FOUND
@@ -78,6 +76,6 @@ def apply_a_star(maze):
     for n in maze.nodes:
         n.distance = float("inf")
         n.heuristic = n.distance_to(maze.end)
-        n.total_cost = float("inf")
+        n.cost = float("inf")
 
-    maze.Node.__lt__ = lambda self, other: self.total_cost < other.total_cost
+    maze.Node.__lt__ = lambda self, other: self.cost < other.cost

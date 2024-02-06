@@ -18,7 +18,7 @@ def solve(maze):
 
     # create a boolean array 'visited' to keep track of visited locations in the maze
     visited = np.zeros(maze.array.shape, dtype=np.uint8)
-    start.distance = 0
+    start.cost = 0
 
     while True:
         if heap.is_empty():
@@ -40,19 +40,18 @@ def solve(maze):
                 continue
 
             # distance from start to neighbor through current node
-            distance_from_start = curr.distance + n.distance_to(curr)
+            distance_from_start = curr.cost + n.distance_to(curr)
 
-            if n.distance <= distance_from_start:
+            if n.cost <= distance_from_start:
                 continue
 
             # if the new distance is shorter, update the distance and parent of neighbor.
-            n.distance = distance_from_start
+            n.cost = distance_from_start
             parent_dict[n] = curr
 
-            # if neighbor was found before, remove it from the heap and push again to reorder the heap
+            # if neighbor was found before, remove it from the heap and heapify to maintain heap property
             if visited[n.coordinates] == FOUND:
-                heap.remove_push(n)
-                continue
+                heap.remove_and_heapify(n)
 
             # mark neighbor as found and push it to the heap
             visited[n.coordinates] = FOUND
@@ -69,10 +68,10 @@ def solve(maze):
 def apply_dijkstra(maze):
     """
     Adds each node a 'distance' attribute, and a comparator between nodes.
-    The distance attribute: the distance from the start node, and is defaulted to 'inf'.
+    The cost attribute: the distance from the start node, and is defaulted to 'inf'.
     """
 
     for n in maze.nodes:
-        n.distance = float("inf")
+        n.cost = float("inf")
 
-    maze.Node.__lt__ = lambda self, other: self.distance < other.distance
+    maze.Node.__lt__ = lambda self, other: self.cost < other.cost
