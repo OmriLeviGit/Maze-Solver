@@ -8,12 +8,19 @@
 </table>
 
 
+### Note
+
+This project represents an early step in my programming journey and may not reflect my current approach to software development. Please be aware that it is not actively maintained, and the code may not meet the standards I would apply today.
+
+
 ## About
 Maze-Solver is a software tool designed for solving mazes effectively using various algorithms.  
 The generated paths are highlighted in green, with backtracked cells in a darker shade for algorithms employing backtracking, such as the Left-Hand turn (LHT) algorithm.  
 Note that LHT solutions may contain white paths in island areas, where connections are not possible using left turns only.  
 
 Most mazes showcased here were generated using [Daedalus](https://www.astrolog.org/labyrnth/daedalus.htm), but the tool will work on any maze that adheres the assumptions below.
+
+
 
 ## Input
 The program is designed to operate under the following assumptions:
@@ -28,6 +35,7 @@ The tool is capable of solving mazes of [any rectangular shape](https://github.c
 
 Additionally, it has the added functionality of processing and solving mazes from [images found on the internet](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Maze1%20From%20The%20Internet%20-%20Dijkstra.jpg), and not just those generated using Daedalus.
 However, note that while it might work, some of the algorithms may resort to an inefficient 'flood-fill' approach, as shown in this [example](https://github.com/OmriLeviGit/Maze-Solver/blob/main/examples/Maze2%20From%20The%20Internet%20-%20Dfs.jpg).
+
 
 ## How It Works
 The program follows these key steps:
